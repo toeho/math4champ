@@ -7,13 +7,13 @@ const features = [
 
 export default function FeatureGrid() {
   return (
-    <div className="grid grid-cols-2 gap-4 mt-6">
+    <div className="grid grid-cols-2 gap-2 mt-2">
       {features.map((f, i) => (
         <button
           key={i}
-          className="bg-white/10 rounded-2xl flex flex-col items-center justify-center p-6 shadow-md text-white text-lg font-semibold hover:bg-white/20 transition"
+          className="bg-white/10 rounded-xl flex flex-col items-center justify-center p-3 shadow text-white text-sm font-medium hover:bg-white/20 transition"
         >
-          <div className="text-2xl mb-2">{f.icon}</div>
+          <div className="text-lg mb-1">{f.icon}</div>
           {f.label}
         </button>
       ))}
