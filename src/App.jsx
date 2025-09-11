@@ -6,9 +6,11 @@ import BottomNav from "./components/BottomNav";
 
 export default function App() {
   return (
-    <div className="h-screen flex justify-center items-center bg-gradient-to-b from-indigo-500 to-purple-600 p-1">
+    <div className="h-screen flex justify-center items-center bg-gradient-to-b from-indigo-500 to-purple-600 p-2 sm:p-2">
       {/* Main App Container */}
-      <div className="w-full max-w-sm h-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-3 flex flex-col">
+      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-full 
+                      bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl 
+                      p-3 sm:p-4 md:p-5 flex flex-col">
         <Header />
         <ProgressBar />
         <FeatureGrid />
