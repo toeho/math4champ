@@ -1,11 +1,22 @@
-const features = [
-  { label: "संख्याएँ", icon: "123" },
-  { label: "जोड़", icon: "+" },
-  { label: "घटाव", icon: "−" },
-  { label: "आकार", icon: "⬤" },
-];
+import { useLanguage } from "../components/LanguageContext";
 
 export default function FeatureGrid() {
+  const { lang } = useLanguage();
+
+  const features = lang === "hi"
+    ? [
+        { label: "संख्याएँ", icon: "123" },
+        { label: "जोड़", icon: "+" },
+        { label: "घटाव", icon: "−" },
+        { label: "आकार", icon: "⬤" },
+      ]
+    : [
+        { label: "Numbers", icon: "123" },
+        { label: "Addition", icon: "+" },
+        { label: "Subtraction", icon: "−" },
+        { label: "Shapes", icon: "⬤" },
+      ];
+
   return (
     <div className="grid grid-cols-2 gap-2 mt-2">
       {features.map((f, i) => (
