@@ -1,19 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Mic } from "lucide-react";
+import { Image } from "lucide-react"; // for dummy image button
 import { sendToGemini } from "../utils/api";
 import { useLanguage } from "./LanguageContext";
 
 export default function ChatSection() {
   const { lang } = useLanguage();
-  const [messages, setMessages] = useState([
-    {
-      text:
-        lang === "hi"
-          ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।"
-          : "Hello! I can help with your math questions.",
-      sender: "bot",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
   // 🔹 Auto-scroll
@@ -21,6 +13,19 @@ export default function ChatSection() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // 🔹 Reset first message when language changes
+  useEffect(() => {
+    setMessages([
+      {
+        text:
+          lang === "hi"
+            ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।"
+            : "Hello! I can help with your math questions.",
+        sender: "bot",
+      },
+    ]);
+  }, [lang]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -47,7 +52,7 @@ export default function ChatSection() {
   };
 
   return (
-    <div className="bg-white/10 rounded-xl p-4 mt-3 shadow text-white flex flex-col h-[60vh] max-h-[60vh]">
+    <div className="bg-white/10 rounded-xl p-4 mt-2 shadow text-white flex flex-col flex-1 min-h-0">
       {/* Header */}
       <h2 className="text-base font-semibold mb-3 shrink-0">
         {lang === "hi" ? "गणित शिक्षक" : "Math Teacher"}
@@ -68,19 +73,33 @@ export default function ChatSection() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input (always pinned) */}
-      <div className="flex items-center mt-3 bg-white/20 rounded-xl px-3 py-2 shrink-0">
+      {/* Input */}
+      <div className="flex items-center mt-3 bg-white/20 rounded-xl px-3 py-2 shrink-0 space-x-2">
+        {/* Dummy image upload button */}
+        <button
+          onClick={() =>
+            alert(lang === "hi" ? "छवि अपलोड अभी डमी है।" : "Image upload is dummy for now.")
+          }
+          className="p-1 hover:bg-white/30 rounded-lg"
+        >
+          <Image className="text-white" size={22} />
+        </button>
+
+        {/* Input field */}
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={
-            lang === "hi" ? "अपना सवाल पूछें..." : "Ask your question..."
-          }
+          placeholder={lang === "hi" ? "अपना सवाल पूछें..." : "Ask your question..."}
           className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/70"
         />
-        <button onClick={handleSend} className="ml-2">
-          <Mic className="text-white" size={22} />
+
+        {/* Send button */}
+        <button
+          onClick={handleSend}
+          className="ml-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-semibold"
+        >
+          &gt;
         </button>
       </div>
     </div>

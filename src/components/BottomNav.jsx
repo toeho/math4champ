@@ -6,16 +6,16 @@ export default function BottomNav() {
 
   const navItems = lang === "hi"
     ? [
-        { icon: <Home size={18} />, label: "होम" },
+        { icon: <Home size={20} />, label: "होम" },
         { icon: "👁", label: "गणित" },
-        { icon: <Compass size={18} />, label: "एक्सप्लोर" },
-        { icon: <User size={18} />, label: "प्रोफ़ाइल" },
+        { icon: <Compass size={20} />, label: "एक्सप्लोर" },
+        { icon: <User size={20} />, label: "प्रोफ़ाइल" },
       ]
     : [
-        { icon: <Home size={18} />, label: "Home" },
+        { icon: <Home size={20} />, label: "Home" },
         { icon: "👁", label: "Math" },
-        { icon: <Compass size={18} />, label: "Explore" },
-        { icon: <User size={18} />, label: "Profile" },
+        { icon: <Compass size={20} />, label: "Explore" },
+        { icon: <User size={20} />, label: "Profile" },
       ];
 
   return (
