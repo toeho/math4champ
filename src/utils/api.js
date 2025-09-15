@@ -1,6 +1,6 @@
 import axios from "axios";
 import prompt from "../prompts/mathPrompt.json"
-const API_KEY = ""
+const API_KEY = "AIzaSyAzgCde_H6Ie69UAAhXyXw3ZGMM3cihLws"
 const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const api = axios.create({
