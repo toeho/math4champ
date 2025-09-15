@@ -1,7 +1,7 @@
 import axios from "axios";
 import prompt from "../prompts/mathPrompt.json";
 
-const API_KEY = "AIzaSyAzgCde_H6Ie69UAAhXyXw3ZGMM3cihLws"; // put your Gemini API key here
+const API_KEY = ""; // put your Gemini API key here
 const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const api = axios.create({
