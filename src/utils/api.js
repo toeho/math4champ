@@ -1,57 +1,51 @@
 import axios from "axios";
-import prompt from "../prompts/mathPrompt.json"
-const API_KEY = "AIzaSyAzgCde_H6Ie69UAAhXyXw3ZGMM3cihLws"
+import prompt from "../prompts/mathPrompt.json";
+
+const API_KEY = "AIzaSyAzgCde_H6Ie69UAAhXyXw3ZGMM3cihLws"; // put your Gemini API key here
 const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
 api.interceptors.request.use((config) => {
   if (!config.params) config.params = {};
-  config.params.key = API_KEY; 
+  config.params.key = API_KEY;
   return config;
 });
 
-// 🔹 GET request
+// Requests
 export const getRequest = async (url, params = {}) => {
   const response = await api.get(url, { params });
   return response.data;
 };
-
-// 🔹 POST request
 export const postRequest = async (url, data = {}, params = {}) => {
   const response = await api.post(url, data, { params });
   return response.data;
 };
 
-// 🔹 PUT request
-export const putRequest = async (url, data = {}, params = {}) => {
-  const response = await api.put(url, data, { params });
-  return response.data;
-};
-
-// utils/api.js
+// Send to Gemini
 export const sendToGemini = async (input, isImage = false) => {
-  const requestBody = {
-    contents: [
-      {
-        parts: isImage
-          ? [
-              { text: `${prompt.math_prompt}` },
-              {
-                inline_data: {
-                  mime_type: "image/png",
-                  data: input.replace(/^data:image\/png;base64,/, ""),
-                },
-              },
-            ]
-          : [{ text: `${prompt.math_prompt}\n\n${input}` }],
-      },
-    ],
-  };
+  let parts;
 
-  return postRequest("/gemma-3-27b-it:generateContent", requestBody);
+  if (isImage) {
+    const { data, mime } = input;
+    const base64Data = data.replace(/^data:[^;]+;base64,/, ""); // works for any type
+    parts = [
+      { text: `${prompt.math_prompt}` },
+      {
+        inline_data: {
+          mime_type: mime, // dynamic
+          data: base64Data,
+        },
+      },
+    ];
+  } else {
+    parts = [{ text: `${prompt.math_prompt}\n\n${input}` }];
+  }
+
+  const requestBody = { contents: [{ parts }] };
+
+  // ✅ Use proper Gemini vision model
+  return postRequest("/gemini-1.5-flash:generateContent", requestBody);
 };

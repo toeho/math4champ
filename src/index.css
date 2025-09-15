@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px; /* slim width */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* or rgba(255,255,255,0.05) for slight tint */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3); /* light gray/white */
+  border-radius: 9999px; /* fully rounded */
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.6); /* brighter on hover */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
