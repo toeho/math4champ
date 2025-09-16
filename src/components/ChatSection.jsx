@@ -36,7 +36,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImage({ data: reader.result, mime: file.type });
+      setImage({ data: reader.result, mime: file.type }); // keep mime + base64
       setMessages((prev) => [
         ...prev,
         { image: reader.result, sender: "user" },
@@ -49,15 +49,18 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
   const handleSend = async () => {
     if ((!input.trim() && !image) || loading) return;
 
+    // store current message
     const userMessage = input.trim();
+
     if (userMessage) {
       setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
     }
 
+    // clear input immediately so it doesn't resend
     setInput("");
 
     try {
-      setLoading(true);
+      setLoading(true); // trigger App-level loading
       const response = await sendToGemini(image || userMessage, !!image);
       const reply =
         response.candidates?.[0]?.content?.parts?.[0]?.text ||
@@ -74,7 +77,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
         },
       ]);
     } finally {
-      setLoading(false);
+      setLoading(false); // stop progress
       setImage(null);
     }
   };
@@ -95,28 +98,24 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 text-sm pr-1">
         {messages.map((msg, i) => (
-          <div key={i} className="w-fit max-w-[80%]">
+          <div
+            key={i}
+            className={`w-fit max-w-[80%] ${
+              msg.sender === "user" ? "ml-auto text-right" : "text-left"
+            }`}
+          >
             {msg.image ? (
               <img
                 src={msg.image}
                 alt="uploaded"
-                className="max-w-[300px] rounded-lg ml-auto"
+                className="max-w-[300px] rounded-lg" // bigger + no border
               />
-            ) : msg.sender === "bot" ? (
-              <div className="flex items-start space-x-2">
-                {/* Teacher Avatar */}
-                <img
-                  src="/teacher.png" // place teacher.png inside /public
-                  alt="Teacher"
-                  className="w-8 h-8 rounded-full border border-white/30"
-                />
-                {/* Bot message */}
-                <div className="bg-white/20 rounded-xl px-3 py-2 break-words">
-                  {msg.text}
-                </div>
-              </div>
             ) : (
-              <div className="rounded-xl px-3 py-2 break-words bg-green-500 ml-auto text-right">
+              <div
+                className={`rounded-xl px-3 py-2 break-words ${
+                  msg.sender === "user" ? "bg-green-500 ml-auto" : "bg-white/20"
+                }`}
+              >
                 {msg.text}
               </div>
             )}

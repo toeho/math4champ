@@ -1,7 +1,7 @@
 import axios from "axios";
 import prompt from "../prompts/mathPrompt.json";
 
-const API_KEY = ""; // put your Gemini API key here
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
 const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
 const api = axios.create({
@@ -27,7 +27,6 @@ export const postRequest = async (url, data = {}, params = {}) => {
 // Send to Gemini
 export const sendToGemini = async (input, isImage = false) => {
   let parts;
-
   if (isImage) {
     const { data, mime } = input;
     const base64Data = data.replace(/^data:[^;]+;base64,/, ""); // works for any type
@@ -47,5 +46,5 @@ export const sendToGemini = async (input, isImage = false) => {
   const requestBody = { contents: [{ parts }] };
 
   // ✅ Use proper Gemini vision model
-  return postRequest("/gemini-1.5-flash:generateContent", requestBody);
+  return postRequest("/gemma-3-27b-it:generateContent", requestBody);
 };
