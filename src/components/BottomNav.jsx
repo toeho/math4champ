@@ -1,21 +1,37 @@
 import { useLanguage } from "../components/LanguageContext";
-import { Home, Compass, User, Infinity} from "lucide-react"; // ✅ import Infinity
+import { Home, Compass, User, Infinity } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function BottomNav({ setIsChatExpanded }) {
   const { lang } = useLanguage();
+  const navigate = useNavigate();
 
   const navItems = lang === "hi"
     ? [
-        { icon: <Home size={20} />, label: "होम", action: () => setIsChatExpanded(false) },
-        { icon: <Infinity size={20} />, label: "गणित" }, // ✅ use Infinity for Math
-        { icon: <Compass size={20} />, label: "एक्सप्लोर" },
-        { icon: <User size={20} />, label: "प्रोफ़ाइल" },
+        { 
+          icon: <Home size={20} />, 
+          label: "होम", 
+          action: () => {
+            setIsChatExpanded(false);
+            navigate("/");
+          } 
+        },
+        { icon: <Infinity size={20} />, label: "गणित", action: () => navigate("/math") },
+        { icon: <Compass size={20} />, label: "एक्सप्लोर", action: () => navigate("/explore") },
+        { icon: <User size={20} />, label: "प्रोफ़ाइल", action: () => navigate("/profile") },
       ]
     : [
-        { icon: <Home size={20} />, label: "Home", action: () => setIsChatExpanded(false) },
-        { icon: <Infinity size={20} />, label: "Math" }, // ✅ use Infinity for Math
-        { icon: <Compass size={20} />, label: "Explore" },
-        { icon: <User size={20} />, label: "Profile" },
+        { 
+          icon: <Home size={20} />, 
+          label: "Home", 
+          action: () => {
+            setIsChatExpanded(false);
+            navigate("/");
+          } 
+        },
+        { icon: <Infinity size={20} />, label: "Math", action: () => navigate("/math") },
+        { icon: <Compass size={20} />, label: "Explore", action: () => navigate("/explore") },
+        { icon: <User size={20} />, label: "Profile", action: () => navigate("/profile") },
       ];
 
   return (
