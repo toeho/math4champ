@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Math from "./pages/Math";
-import Explore from "./pages/Explore";
+import History from "./pages/History";
 import Profile from "./pages/Profile";
 
 export default function App() {
@@ -16,18 +16,18 @@ export default function App() {
           }
         />
         <Route
-          path="/math"
+          path="/history"
           element={
             <MainLayout>
-              {(props) => <Math {...props} />}
+              {(props) => <History {...props} />}
             </MainLayout>
           }
         />
         <Route
-          path="/explore"
+          path="/math"
           element={
             <MainLayout>
-              {(props) => <Explore {...props} />}
+              {(props) => <Math {...props} />}
             </MainLayout>
           }
         />

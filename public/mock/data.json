@@ -1,0 +1,29 @@
+{
+  "history": [
+    {
+      "id": 1,
+      "title": "Simple algebra",
+      "messages": [
+        { "sender": "user", "text": "What is 2 + 2?" },
+        { "sender": "bot", "text": "It’s 4." }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Geometry question",
+      "messages": [
+        { "sender": "user", "text": "What is the area of a circle?" },
+        { "sender": "bot", "text": "π × r²" }
+      ]
+    }
+  ],
+  "profile": {
+    "name": "Test User",
+    "classLevel": "Class 2",
+    "level": 1,
+    "email": "test@example.com",
+    "age": 10,
+    "school": "Sample School",
+    "avatar": null
+  }
+}

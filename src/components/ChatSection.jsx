@@ -3,10 +3,29 @@ import { useState, useRef, useEffect } from "react";
 import { Image } from "lucide-react";
 import { sendToGemini } from "../utils/api";
 import { useLanguage } from "./LanguageContext";
+import { useHistoryStore } from "./HistoryContext";
 
-export default function ChatSection({ setIsChatExpanded, loading, setLoading }) {
+export default function ChatSection({
+  setIsChatExpanded,
+  isChatExpanded,
+  loading,
+  setLoading,
+  loadMessages, // 👈 preload messages from history
+}) {
   const { lang } = useLanguage();
-  const [messages, setMessages] = useState([]);
+  const { addConversation } = useHistoryStore();
+
+  const [messages, setMessages] = useState(
+    loadMessages || [
+      {
+        text:
+          lang === "hi"
+            ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।"
+            : "Hello! I can help with your math questions.",
+        sender: "bot",
+      },
+    ]
+  );
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
 
@@ -16,17 +35,19 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Reset on language change
+  // Reset on language change (if not loading history)
   useEffect(() => {
-    setMessages([
-      {
-        text:
-          lang === "hi"
-            ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।"
-            : "Hello! I can help with your math questions.",
-        sender: "bot",
-      },
-    ]);
+    if (!loadMessages) {
+      setMessages([
+        {
+          text:
+            lang === "hi"
+              ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।"
+              : "Hello! I can help with your math questions.",
+          sender: "bot",
+        },
+      ]);
+    }
   }, [lang]);
 
   // File upload
@@ -36,7 +57,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImage({ data: reader.result, mime: file.type }); // keep mime + base64
+      setImage({ data: reader.result, mime: file.type });
       setMessages((prev) => [
         ...prev,
         { image: reader.result, sender: "user" },
@@ -49,24 +70,36 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
   const handleSend = async () => {
     if ((!input.trim() && !image) || loading) return;
 
-    // store current message
     const userMessage = input.trim();
 
+    // Add user message
     if (userMessage) {
       setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
     }
 
-    // clear input immediately so it doesn't resend
+    // Reset input
     setInput("");
 
     try {
-      setLoading(true); // trigger App-level loading
+      setLoading(true);
+
+      // Send to Gemini
       const response = await sendToGemini(image || userMessage, !!image);
       const reply =
         response.candidates?.[0]?.content?.parts?.[0]?.text ||
         (lang === "hi" ? "कोई उत्तर नहीं मिला।" : "No response received.");
 
-      setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
+      const newMessages = [
+        ...messages,
+        userMessage ? { text: userMessage, sender: "user" } : null,
+        image ? { image: image.data, sender: "user" } : null,
+        { text: reply, sender: "bot" },
+      ].filter(Boolean);
+
+      setMessages(newMessages);
+
+      // Save to history after bot reply
+      addConversation(newMessages);
     } catch (error) {
       console.error("Gemini API Error:", error);
       setMessages((prev) => [
@@ -77,7 +110,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
         },
       ]);
     } finally {
-      setLoading(false); // stop progress
+      setLoading(false);
       setImage(null);
     }
   };
@@ -108,7 +141,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
               <img
                 src={msg.image}
                 alt="uploaded"
-                className="max-w-[300px] rounded-lg" // bigger + no border
+                className="max-w-[300px] rounded-lg"
               />
             ) : (
               <div
@@ -122,7 +155,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
           </div>
         ))}
 
-        {/* Progress bar */}
+        {/* Loading indicator */}
         {loading && (
           <div className="w-full bg-white/20 rounded-full h-2 mt-2">
             <div className="bg-green-500 h-2 rounded-full animate-pulse w-2/3"></div>
@@ -132,8 +165,9 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* Input area */}
       <div className="flex items-center mt-3 bg-white/20 rounded-xl px-3 py-2 shrink-0 space-x-2">
+        {/* Image upload */}
         <label className="p-1 hover:bg-white/30 rounded-lg cursor-pointer">
           <Image className="text-white" size={22} />
           <input
@@ -144,6 +178,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
           />
         </label>
 
+        {/* Text input */}
         <input
           type="text"
           value={input}
@@ -156,6 +191,7 @@ export default function ChatSection({ setIsChatExpanded, loading, setLoading }) 
           onFocus={() => setIsChatExpanded(true)}
         />
 
+        {/* Send button */}
         <button
           onClick={handleSend}
           disabled={loading}

@@ -1,5 +1,5 @@
 import { useLanguage } from "../components/LanguageContext";
-import { Home, Compass, User, Infinity } from "lucide-react";
+import { Home, Compass, User, Infinity, MessageSquare } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
 
 export default function BottomNav({ setIsChatExpanded }) {
@@ -16,8 +16,8 @@ export default function BottomNav({ setIsChatExpanded }) {
             navigate("/");
           } 
         },
+        { icon: <MessageSquare size={20} />, label: "चैट हिस्ट्री", action: () => navigate("/history") },
         { icon: <Infinity size={20} />, label: "गणित", action: () => navigate("/math") },
-        { icon: <Compass size={20} />, label: "एक्सप्लोर", action: () => navigate("/explore") },
         { icon: <User size={20} />, label: "प्रोफ़ाइल", action: () => navigate("/profile") },
       ]
     : [
@@ -29,8 +29,8 @@ export default function BottomNav({ setIsChatExpanded }) {
             navigate("/");
           } 
         },
+        { icon: <MessageSquare size={20} />, label: "Chat History", action: () => navigate("/history") },
         { icon: <Infinity size={20} />, label: "Math", action: () => navigate("/math") },
-        { icon: <Compass size={20} />, label: "Explore", action: () => navigate("/explore") },
         { icon: <User size={20} />, label: "Profile", action: () => navigate("/profile") },
       ];
 

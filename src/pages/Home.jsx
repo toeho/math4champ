@@ -1,4 +1,6 @@
+// src/pages/Home.jsx
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import ProgressBar from "../components/ProgressBar";
 import FeatureGrid from "../components/FeatureGrid";
@@ -7,7 +9,11 @@ import BottomNav from "../components/BottomNav";
 
 export default function Home() {
   const [isChatExpanded, setIsChatExpanded] = useState(false);
-  const [loading, setLoading] = useState(false); // ✅ track progress
+  const [loading, setLoading] = useState(false);
+
+  // 👇 if user navigates from History, preload messages
+  const location = useLocation();
+  const preloadMessages = location.state?.messages || null;
 
   return (
     <div
@@ -16,20 +22,28 @@ export default function Home() {
     >
       <div
         className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-full 
-                   bg-e/10 backdrop-blur-lg rounded-2xl shadow-2xl 
+                   bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl 
                    p-3 sm:p-4 md:p-5 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Top header */}
         <Header />
-        <ProgressBar loading={loading} /> {/* ✅ show live progress */}
 
+        {/* Progress bar */}
+        <ProgressBar loading={loading} />
+
+        {/* Show features only if chat is not expanded */}
         {!isChatExpanded && <FeatureGrid />}
+
+        {/* Chat Section with preloaded history support */}
         <ChatSection
           setIsChatExpanded={setIsChatExpanded}
           isChatExpanded={isChatExpanded}
-          setLoading={setLoading} // ✅ pass setter
+          setLoading={setLoading}
+          loadMessages={preloadMessages} // 👈 added
         />
 
+        {/* Bottom Navigation */}
         <BottomNav setIsChatExpanded={setIsChatExpanded} />
       </div>
     </div>

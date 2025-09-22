@@ -1,73 +1,107 @@
 // src/pages/Profile.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "../components/UserContext";
 import Login from "./Login";
-import { LogOut, Star, Edit, Save, Upload } from "lucide-react";
+import { LogOut, Star, Edit, Save, Upload, X } from "lucide-react";
+import { fetchUser, saveUser } from "../utils/userApi";
 
 export default function Profile() {
   const { user, logout, updateUser } = useUser();
   const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [form, setForm] = useState({
-    classLevel: user?.classLevel || "Class 1",
-    level: user?.level || 1,
-    email: user?.email || "",
-    age: user?.age || "",
-    school: user?.school || "",
-    avatar: user?.avatar || null,
-  });
+  // Load user (localStorage / JSON / API)
+  useEffect(() => {
+    (async () => {
+      const data = await fetchUser();
+      if (data) {
+        updateUser(data);
+        setForm(data);
+      }
+      setLoading(false);
+    })();
+  }, [updateUser]);
 
-  if (!user) {
-    return <Login />;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full text-white">
+        <p>Loading profile...</p>
+      </div>
+    );
   }
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  if (!user) return <Login />;
+
+  const handleChange = (e) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setForm({ ...form, avatar: reader.result }); // base64
-    };
+    reader.onloadend = () =>
+      setForm((prev) => ({ ...prev, avatar: reader.result }));
     reader.readAsDataURL(file);
   };
 
-  const handleSave = () => {
-    updateUser(form);
-    setEditing(false);
+  const handleRemoveImage = () =>
+    setForm((prev) => ({ ...prev, avatar: null }));
+
+  const handleSave = async () => {
+    const updated = await saveUser(form);
+    if (updated) {
+      updateUser(updated);
+      setForm(updated);
+      setEditing(false);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-start h-full text-white">
       {/* Profile Card */}
       <div className="bg-white/10 rounded-xl p-4 flex flex-col items-center w-full shadow mb-4">
-        <img
-          src={form.avatar || "https://i.pravatar.cc/150"}
-          alt="Profile"
-          className="w-24 h-24 rounded-full border-4 border-purple-500 mb-3 object-cover"
-        />
+        <div className="relative">
+          <img
+            src={form?.avatar || "https://i.pravatar.cc/150"}
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-4 border-purple-500 mb-3 object-cover"
+          />
+          {editing && form?.avatar && (
+            <button
+              onClick={handleRemoveImage}
+              className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 rounded-full p-1 text-white"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+
         {editing && (
           <label className="cursor-pointer flex items-center gap-2 bg-white/20 px-3 py-1 rounded-lg text-sm mb-2 hover:bg-white/30">
             <Upload size={16} /> Upload
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
           </label>
         )}
 
-        <h2 className="text-xl font-bold">{user.name}</h2>
+        <h2 className="text-xl font-bold">{form?.name || user.name}</h2>
+
         {!editing ? (
           <p className="text-sm text-gray-300">
-            {user.classLevel} · Level {user.level}
+            {form?.classLevel || user.classLevel} · Level {form?.level || user.level}
           </p>
         ) : (
-          <div className="space-y-2 w-full text-sm text-gray-800">
+          <div className="space-y-2 w-full text-sm text-gray-800 mt-3">
             <label className="block">
               Class:
               <select
                 name="classLevel"
-                value={form.classLevel}
+                value={form.classLevel || ""}
                 onChange={handleChange}
                 className="w-full px-2 py-1 rounded mt-1"
               >
@@ -84,7 +118,7 @@ export default function Profile() {
               <input
                 type="number"
                 name="level"
-                value={form.level}
+                value={form.level || ""}
                 onChange={handleChange}
                 className="w-full px-2 py-1 rounded mt-1"
               />
@@ -94,7 +128,7 @@ export default function Profile() {
               <input
                 type="email"
                 name="email"
-                value={form.email}
+                value={form.email || ""}
                 onChange={handleChange}
                 className="w-full px-2 py-1 rounded mt-1"
               />
@@ -104,7 +138,7 @@ export default function Profile() {
               <input
                 type="number"
                 name="age"
-                value={form.age}
+                value={form.age || ""}
                 onChange={handleChange}
                 className="w-full px-2 py-1 rounded mt-1"
               />
@@ -114,7 +148,7 @@ export default function Profile() {
               <input
                 type="text"
                 name="school"
-                value={form.school}
+                value={form.school || ""}
                 onChange={handleChange}
                 className="w-full px-2 py-1 rounded mt-1"
               />
@@ -129,8 +163,12 @@ export default function Profile() {
           <Star className="text-yellow-400" /> Progress
         </h3>
         <div className="flex justify-between text-sm">
-          <span>Points: <b>250</b></span>
-          <span>Level: <b>{user.level}</b></span>
+          <span>
+            Points: <b>250</b>
+          </span>
+          <span>
+            Level: <b>{form?.level || user.level}</b>
+          </span>
           <span>Stars: ⭐⭐⭐</span>
         </div>
       </div>
