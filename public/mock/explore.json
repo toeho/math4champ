@@ -1,0 +1,15 @@
+{
+  "progress": { "percentage": 80, "mastered": 13, "total": 20 },
+  "accuracy": 78,
+  "practice": { "problems": 120, "minutes": 85, "streak": 4 },
+  "strengths": { "strongest": "Addition", "focus": "Fractions" },
+  "weeklyGoal": { "goal": 50, "solved": 30 },
+  "badges": [
+    "Addition Master",
+    "Fraction Explorer",
+    "Geometry Expert",
+    "Multiplication Pro",
+    "Division Master",
+    "Integation Expert"
+  ]
+}
