@@ -1,4 +1,3 @@
-// src/components/HistoryContext.jsx
 import { createContext, useState, useContext } from "react";
 
 const HistoryContext = createContext();
@@ -18,8 +17,4 @@ export function HistoryProvider({ children }) {
       {children}
     </HistoryContext.Provider>
   );
-}
-
-export function useHistoryStore() {
-  return useContext(HistoryContext);
 }

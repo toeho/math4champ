@@ -15,7 +15,3 @@ export function LanguageProvider({ children }) {
     </LanguageContext.Provider>
   );
 }
-
-export function useLanguage() {
-  return useContext(LanguageContext);
-}
