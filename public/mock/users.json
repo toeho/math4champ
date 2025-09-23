@@ -1,0 +1,24 @@
+[
+  {
+    "username": "alice",
+    "password": "123",
+    "name": "Alice",
+    "level": 2,
+    "email": "alice@example.com",
+    "avatar": null,
+    "classLevel": "Class 4",
+    "age": 10,
+    "school": "Greenwood School"
+  },
+  {
+    "username": "bob",
+    "password": "456",
+    "name": "Bob",
+    "level": 3,
+    "email": "bob@example.com",
+    "avatar": null,
+    "classLevel": "Class 5",
+    "age": 11,
+    "school": "Sunrise Academy"
+  }
+]

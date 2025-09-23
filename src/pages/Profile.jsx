@@ -1,6 +1,6 @@
 // src/pages/Profile.jsx
 import { useState, useEffect } from "react";
-import { useUser } from "../components/UserContext";
+import { useUser } from "../hooks/useUser";
 import Login from "./Login";
 import { LogOut, Star, Edit, Save, Upload, X } from "lucide-react";
 

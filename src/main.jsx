@@ -1,20 +1,19 @@
-// src/main.jsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css"
 import App from "./App.jsx";
-import { LanguageProvider } from "./contexts/LanguageContext";
-import { UserProvider } from "./contexts/UserContext";
-import { HistoryProvider } from "./contexts/HistoryContext";
+import { UserProvider } from "./contexts/UserProvider";
+import { LanguageProvider } from "./contexts/LanguageProvider";
+import { HistoryProvider } from "./contexts/HistoryProvider";
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <LanguageProvider>
-      <UserProvider>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <UserProvider>
+      <LanguageProvider>
         <HistoryProvider>
           <App />
         </HistoryProvider>
-      </UserProvider>
-    </LanguageProvider>
-  </StrictMode>
+      </LanguageProvider>
+    </UserProvider>
+  </React.StrictMode>
 );

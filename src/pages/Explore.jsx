@@ -1,4 +1,3 @@
-// src/pages/Explore.jsx
 import { useEffect, useState } from "react";
 import { getExploreData } from "../utils/exploreApi";
 
@@ -6,7 +5,7 @@ export default function Explore() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    getExploreData().then((res) => setData(res));
+    getExploreData().then(setData);
   }, []);
 
   if (!data) return <div className="text-white p-4">Loading...</div>;
@@ -78,9 +77,7 @@ export default function Explore() {
               <p className="text-xs">Minutes</p>
             </div>
           </div>
-          <p className="text-orange-400 font-semibold">
-            🔥 {practice.streak} day streak
-          </p>
+          <p className="text-orange-400 font-semibold">🔥 {practice.streak} day streak</p>
         </div>
 
         <div className="bg-white/10 rounded-xl p-4 shadow">
@@ -104,24 +101,19 @@ export default function Explore() {
         </p>
         <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden mb-2">
           <div
-            className="h-full bg-gradient-to-r from-green-400 to-blue-500"
-            style={{
-              width: `${(weeklyGoal.solved / weeklyGoal.goal) * 100}%`,
-            }}
-          ></div>
+            className="h-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300"
+            style={{ width: `${(weeklyGoal.solved / weeklyGoal.goal) * 100}%` }}
+          />
         </div>
         <div className="flex gap-2">
           <input
             type="number"
             value={weeklyGoal.goal}
             onChange={(e) =>
-              setData({
-                ...data,
-                weeklyGoal: {
-                  ...weeklyGoal,
-                  goal: Number(e.target.value),
-                },
-              })
+              setData(prev => ({
+                ...prev,
+                weeklyGoal: { ...prev.weeklyGoal, goal: Number(e.target.value) },
+              }))
             }
             className="px-2 py-1 rounded text-black w-20"
           />

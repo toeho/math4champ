@@ -1,28 +1,29 @@
-const LOCAL_FILE = "/mock/user.json";
+const USERS_FILE = "/mock/users.json";
 const API_URL = import.meta.env.VITE_API_URL;
 const MAKE_CALL = import.meta.env.VITE_API_CALL === "true";
 
-// Helper: get token from localStorage
+// Get token from localStorage
 function getToken() {
   return localStorage.getItem("token") || "";
 }
 
-// GET user
+// GET current user
 export async function fetchUser() {
   try {
     if (!MAKE_CALL) {
+      const token = getToken();
+      if (!token) return null;
+
       const cached = localStorage.getItem("user");
       if (cached) return JSON.parse(cached);
 
-      const res = await fetch(LOCAL_FILE);
-      if (res.ok) return await res.json();
-
-      throw new Error("Local JSON not found");
+      return null;
     }
 
     const res = await fetch(`${API_URL}/me`, {
       headers: { Authorization: `Bearer ${getToken()}` },
     });
+
     if (!res.ok) throw new Error("API fetch failed");
     return await res.json();
   } catch (err) {
@@ -63,10 +64,16 @@ export async function saveUser(userData) {
 // LOGIN → returns token
 export async function loginUser({ username, password }) {
   if (!MAKE_CALL) {
-    const user = { username, name: username, level: 1, email: "", avatar: null };
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", "mock-token");
-    return { token: "mock-token", user };
+    const res = await fetch(USERS_FILE);
+    const users = await res.json();
+
+    const found = users.find(u => u.username === username && u.password === password);
+    if (!found) throw new Error("Invalid username or password");
+
+    localStorage.setItem("user", JSON.stringify(found));
+    localStorage.setItem("token", "mock-token-" + found.username);
+
+    return { token: "mock-token-" + found.username, user: found };
   }
 
   const res = await fetch(`${API_URL}/login`, {
@@ -84,10 +91,10 @@ export async function loginUser({ username, password }) {
 // SIGNUP → returns token
 export async function signupUser({ name, username, password }) {
   if (!MAKE_CALL) {
-    const user = { username, name, level: 1, email: "", avatar: null };
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", "mock-token");
-    return { token: "mock-token", user };
+    const newUser = { username, password, name, level: 1, email: "", avatar: null };
+    localStorage.setItem("user", JSON.stringify(newUser));
+    localStorage.setItem("token", "mock-token-" + username);
+    return { token: "mock-token-" + username, user: newUser };
   }
 
   const res = await fetch(`${API_URL}/signup`, {
@@ -100,4 +107,10 @@ export async function signupUser({ name, username, password }) {
   const data = await res.json();
   localStorage.setItem("token", data.access_token);
   return data;
+}
+
+// LOGOUT
+export function logoutUser() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 }
