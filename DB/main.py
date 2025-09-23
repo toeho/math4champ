@@ -2,7 +2,8 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from conn import SessionLocal, engine, Base
-from data_models import User
+from data_models import *
+import crud_msg
 import schema
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from auth_utils import get_user, verify_password, hash_password, create_access_token, decode_access_token
@@ -57,3 +58,21 @@ def read_profile(token: str = Depends(oauth2_scheme)):
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
     return {"user": payload}
+
+
+
+@app.post("/sessions/{user_id}", response_model=schema.SessionResponse)
+def start_session(user_id: str, db: Session = Depends(get_db)):
+    return crud_msg.create_session(db, user_id)
+
+@app.get("/sessions/{user_id}", response_model=list[schema.SessionResponse])
+def get_sessions(user_id: str, db: Session = Depends(get_db)):
+    return crud_msg.get_sessions_for_user(db, user_id)
+
+@app.post("/messages", response_model=schema.MessageResponse)
+def add_message(message: schema.MessageCreate, db: Session = Depends(get_db)):
+    return crud_msg.add_message(db, message)
+
+@app.get("/sessions/{session_id}/messages", response_model=list[schema.MessageResponse])
+def get_session_messages(session_id: int, db: Session = Depends(get_db)):
+    return crud_msg.get_messages(db, session_id)

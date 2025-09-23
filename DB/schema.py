@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-
+from typing import List, Optional
+from datetime import datetime
 # shared fields
 class UserBase(BaseModel):
     user_id: str
@@ -21,3 +22,39 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True  # 👈 allows SQLAlchemy models to be returned
+
+
+class SessionBase(BaseModel):
+    id: int
+    started_at: datetime
+
+
+class SessionCreate(BaseModel):
+    pass  
+
+
+class SessionResponse(SessionBase):
+    messages: List["MessageResponse"] = []  
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------- MESSAGE MODELS ----------------
+class MessageBase(BaseModel):
+    role: str   # "user" or "assistant"
+    content: str
+
+
+class MessageCreate(MessageBase):
+    session_id: int
+
+
+class MessageResponse(MessageBase):
+    id: int
+    timestamp: datetime
+
+    class Config:
+        orm_mode = True
+
+SessionResponse.model_rebuild()
