@@ -1,10 +1,8 @@
-import { createContext, useState, useContext } from "react";
-
-const HistoryContext = createContext();
+import { useState } from "react";
+import { HistoryContext } from "./HistoryContext";
 
 export function HistoryProvider({ children }) {
-  const [history, setHistory] = useState([]); 
-  // each item = { id, title, messages }
+  const [history, setHistory] = useState([]);
 
   const addConversation = (messages) => {
     const id = Date.now();

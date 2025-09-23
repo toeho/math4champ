@@ -1,14 +1,11 @@
-// src/components/UserContext.jsx
-import { createContext, useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { UserContext } from "./UserContext";
 import { fetchUser, saveUser, loginUser, signupUser } from "../utils/userApi";
-
-const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user on mount
   useEffect(() => {
     (async () => {
       const u = await fetchUser();
@@ -51,14 +48,7 @@ export function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        signup,
-        updateUser: updateUserContext,
-        logout,
-      }}
+      value={{ user, loading, login, signup, updateUser: updateUserContext, logout }}
     >
       {children}
     </UserContext.Provider>

@@ -1,13 +1,10 @@
-import { createContext, useState, useContext } from "react";
-
-const LanguageContext = createContext();
+import { useState } from "react";
+import { LanguageContext } from "./LanguageContext";
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState("hi"); // default Hindi
+  const [lang, setLang] = useState("hi");
 
-  const toggleLang = () => {
-    setLang((prev) => (prev === "hi" ? "en" : "hi"));
-  };
+  const toggleLang = () => setLang((prev) => (prev === "hi" ? "en" : "hi"));
 
   return (
     <LanguageContext.Provider value={{ lang, toggleLang }}>
