@@ -9,67 +9,46 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isSignup, setIsSignup] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError("Please enter both fields");
-      return;
-    }
+    if (!username || !password) return setError("Please enter both fields");
 
-    let result;
-    if (isSignup) {
-      result = signup(username, password);
-    } else {
-      result = login(username, password);
-    }
+    try {
+      let res;
+      if (isSignup) res = await signup({ name: username, username, password });
+      else res = await login(username, password);
 
-    if (!result.success) {
-      setError(result.message || "Something went wrong");
-    } else {
+      if (!res.success) throw new Error(res.message || "Operation failed");
       setError("");
+    } catch (err) {
+      setError(err.message || "Something went wrong");
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-white">
       <h1 className="text-2xl font-bold mb-4">{isSignup ? "📝 Sign Up" : "🔑 Login"}</h1>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white/10 p-6 rounded-xl shadow-md w-full max-w-xs"
-      >
-        <label className="block mb-2 text-sm">Username</label>
+      <form onSubmit={handleSubmit} className="bg-white/10 p-6 rounded-xl shadow-md w-full max-w-xs">
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-3 py-2 rounded bg-white/20 text-white outline-none mb-3"
-          placeholder="Your name"
+          placeholder="Username"
+          className="w-full px-3 py-2 rounded bg-white/20 text-white mb-3 outline-none"
         />
-
-        <label className="block mb-2 text-sm">Password</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 rounded bg-white/20 text-white outline-none mb-4"
-          placeholder="Enter password"
+          placeholder="Password"
+          className="w-full px-3 py-2 rounded bg-white/20 text-white mb-4 outline-none"
         />
-
         {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
-
-        <button
-          type="submit"
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg"
-        >
+        <button type="submit" className="w-full bg-green-500 hover:bg-green-600 py-2 rounded-lg">
           {isSignup ? "Sign Up" : "Login"}
         </button>
       </form>
-
-      <button
-        onClick={() => setIsSignup(!isSignup)}
-        className="mt-4 text-sm text-orange-300 hover:underline"
-      >
+      <button onClick={() => setIsSignup(!isSignup)} className="mt-4 text-sm text-orange-300 hover:underline">
         {isSignup ? "Already have an account? Login" : "New user? Sign up"}
       </button>
     </div>

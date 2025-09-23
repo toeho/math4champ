@@ -23,4 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 .env
-DB/__pycache__
+**/__pycache__/

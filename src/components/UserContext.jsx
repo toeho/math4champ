@@ -1,51 +1,65 @@
 // src/components/UserContext.jsx
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+import { fetchUser, saveUser, loginUser, signupUser } from "../utils/userApi";
 
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  const signup = (username, password) => {
-    if (users[username]) {
-      return { success: false, message: "User already exists" };
-    }
-    const newUser = {
-      password,
-      classLevel: "Class 1",
-      level: 1,
-      email: "",
-      age: "",
-      school: "",
-      avatar: null, // 👈 added avatar
-    };
-    setUsers((prev) => ({ ...prev, [username]: newUser }));
-    setUser({ name: username, ...newUser });
-    return { success: true };
-  };
+  // Load user on mount
+  useEffect(() => {
+    (async () => {
+      const u = await fetchUser();
+      if (u) setUser(u);
+      setLoading(false);
+    })();
+  }, []);
 
-  const login = (username, password) => {
-    if (users[username] && users[username].password === password) {
-      setUser({ name: username, ...users[username] });
+  const login = async (username, password) => {
+    try {
+      const data = await loginUser({ username, password });
+      setUser(data.user || data);
       return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message || "Login failed" };
     }
-    return { success: false, message: "Invalid credentials" };
   };
 
-  const updateUser = (updates) => {
-    if (!user) return;
-    setUsers((prev) => ({
-      ...prev,
-      [user.name]: { ...prev[user.name], ...updates },
-    }));
-    setUser((prev) => ({ ...prev, ...updates }));
+  const signup = async ({ name, username, password }) => {
+    try {
+      const data = await signupUser({ name, username, password });
+      setUser(data.user || data);
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message || "Signup failed" };
+    }
   };
 
-  const logout = () => setUser(null);
+  const updateUserContext = async (updates) => {
+    if (!user) return null;
+    const updated = await saveUser({ ...user, ...updates });
+    if (updated) setUser(updated);
+    return updated;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
   return (
-    <UserContext.Provider value={{ user, users, signup, login, updateUser, logout }}>
+    <UserContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        signup,
+        updateUser: updateUserContext,
+        logout,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
