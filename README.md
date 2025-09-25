@@ -1,9 +1,7 @@
 # 📘 API Documentation
 
-This document provides details of all the available APIs in the
+This document provides details of all the NEEDED APIs in the
 project.\
-Authentication uses **JWT tokens** which must be included in the request
-headers after login.
 
 ------------------------------------------------------------------------
 
