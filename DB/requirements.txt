@@ -1,0 +1,4 @@
+sqlalchmey
+fastapi
+typing
+pydantic
