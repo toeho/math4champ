@@ -16,14 +16,5 @@
         { "sender": "bot", "text": "π × r²" }
       ]
     }
-  ],
-  "profile": {
-    "name": "Test User",
-    "classLevel": "Class 2",
-    "level": 1,
-    "email": "test@example.com",
-    "age": 10,
-    "school": "Sample School",
-    "avatar": null
-  }
+  ]
 }
