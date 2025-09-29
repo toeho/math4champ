@@ -103,6 +103,7 @@ Sends a message (text or image) to the active chat session.
 
 ``` json
 {
+  "sessionId": 101,
   "message": "what i am doing",
   "image": "base64 image",
   "isImage": true
