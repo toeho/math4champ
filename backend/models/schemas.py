@@ -2,10 +2,17 @@ from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 
 
+
 # ---------- User ----------
 class UserBase(BaseModel):
     username: str
     name: Optional[str] = None
+    level: Optional[int] = None
+    email: Optional[EmailStr] = None
+    avatar: Optional[str] = None
+    classLevel: Optional[str] = None
+    age: Optional[int] = None
+    school: Optional[str] = None
 
 
 class UserCreate(UserBase):
@@ -20,12 +27,19 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     password: Optional[str] = None
+    level: Optional[int] = None
+    email: Optional[EmailStr] = None
+    avatar: Optional[str] = None
+    classLevel: Optional[str] = None
+    age: Optional[int] = None
+    school: Optional[str] = None
 
 
 class UserOut(UserBase):
     id: int
 
-
+    class Config:
+        orm_mode = True
 # ---------- Chat / Messages ----------
 class Message(BaseModel):
     text: Optional[str] = None

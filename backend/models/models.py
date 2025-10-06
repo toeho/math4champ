@@ -9,10 +9,16 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
-    name = Column(String, nullable=True)
     password = Column(String, nullable=False)
 
-
+    # Extra fields
+    name = Column(String, nullable=True)
+    level = Column(Integer, default=1)
+    email = Column(String, unique=True, nullable=True)
+    avatar = Column(Text, nullable=True)
+    classLevel = Column(String, nullable=True)
+    age = Column(Integer, nullable=True)
+    school = Column(String, nullable=True)
 # ---------- Chat ----------
 class Chat(Base):
     __tablename__ = "chats"
