@@ -23,7 +23,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
         level=user.level,
         email=user.email,
         avatar=user.avatar,
-        classLevel=user.classLevel,
+        classLevel=user.class_level,
         age=user.age,
         school=user.school,
     )

@@ -4,20 +4,36 @@ from typing import List, Optional
 
 
 # ---------- User ----------
+
 class UserBase(BaseModel):
     username: str
     name: Optional[str] = None
     level: Optional[int] = None
     email: Optional[EmailStr] = None
     avatar: Optional[str] = None
-    classLevel: Optional[str] = None
+    class_level: Optional[str] = None  # snake_case
     age: Optional[int] = None
     school: Optional[str] = None
 
+    class Config:
+        allow_population_by_field_name = True  # allows camelCase from frontend
+        
+# In your schemas.py
+from pydantic import BaseModel, Field
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    username: str
     password: str
-
+    name: str
+    level: int = 1
+    email: str | None = None
+    avatar: str | None = None
+    class_level: int | None 
+    age: int | None = None
+    school: str | None = None
+    
+    class Config:
+        populate_by_name = True  # Allow both field name and alias
 
 class UserLogin(BaseModel):
     username: str
