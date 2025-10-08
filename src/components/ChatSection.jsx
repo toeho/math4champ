@@ -35,35 +35,44 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
     reader.readAsDataURL(file);
   };
 
-  const handleSend = async () => {
-    if ((!input.trim() && !image) || loading) return;
+const handleSend = async () => {
+  if ((!input.trim() && !image) || loading) return;
 
-    const userMessage = input.trim();
-    if (userMessage) setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
-    setInput("");
+  const userMessage = input.trim();
 
-    try {
-      setLoading(true);
-      const response = await sendToGemini(image || userMessage, !!image);
-      const reply = response.candidates?.[0]?.content?.parts?.[0]?.text || (lang === "hi" ? "कोई उत्तर नहीं मिला।" : "No response received.");
+  // show user message immediately
+  const userEntries = [];
+  if (userMessage) userEntries.push({ text: userMessage, sender: "user" });
+  // if (image) userEntries.push({ image: image.data, sender: "user" });
+  setMessages((prev) => [...prev, ...userEntries]);
+  setInput("");
 
-      const newMessages = [
-        ...messages,
-        userMessage ? { text: userMessage, sender: "user" } : null,
-        image ? { image: image.data, sender: "user" } : null,
-        { text: reply, sender: "bot" }
-      ].filter(Boolean);
+  try {
+    setLoading(true);
 
-      setMessages(newMessages);
-      addConversation(newMessages);
-    } catch (error) {
-      console.error(error);
-      setMessages((prev) => [...prev, { text: lang === "hi" ? "त्रुटि हुई।" : "An error occurred.", sender: "bot" }]);
-    } finally {
-      setLoading(false);
-      setImage(null);
-    }
-  };
+    const response = await sendToGemini({
+      text: userMessage || null,
+      image: image || null,
+    });
+
+    const reply =
+      response.candidates?.[0]?.content?.parts?.[0]?.text ||
+      (lang === "hi" ? "कोई उत्तर नहीं मिला।" : "No response received.");
+
+    setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
+    addConversation([...messages, ...userEntries, { text: reply, sender: "bot" }]);
+  } catch (error) {
+    console.error(error);
+    setMessages((prev) => [
+      ...prev,
+      { text: lang === "hi" ? "त्रुटि हुई।" : "An error occurred.", sender: "bot" },
+    ]);
+  } finally {
+    setLoading(false);
+    setImage(null);
+  }
+};
+
 
   const handleKeyDown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } };
 
