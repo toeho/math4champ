@@ -66,8 +66,8 @@ class Message(BaseModel):
 class Chat(BaseModel):
     id: int
     title: str
+    session_id: Optional[str] = None  # add session_id here
     messages: List[Message]
-
 
 # ---------- Explore ----------
 class Progress(BaseModel):

@@ -25,9 +25,9 @@ class Chat(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
+    session_id = Column(String, index=True, nullable=True)  # belongs to chat
 
     messages = relationship("Message", back_populates="chat", cascade="all, delete")
-
 
 class Message(Base):
     __tablename__ = "messages"
