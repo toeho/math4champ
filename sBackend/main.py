@@ -1,13 +1,24 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, List
 import base64
 from google import genai
 from google.genai import types
+from fastapi.middleware.cors import CORSMiddleware
 
 client = genai.Client(api_key="AIzaSyDt6D-1Ss-cJhLGfNhfOTwtjvks1ynQ8ac")
 
 app = FastAPI()
+
+# Allow CORS so the frontend (vite) can call this backend. In dev it's common to
+# allow all origins; tighten this in production if needed.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class ChatRequest(BaseModel):
     sessionId: int
@@ -63,6 +74,68 @@ async def chat_endpoint(req: ChatRequest):
 
     except Exception as e:
         return {"error": str(e)}
+
+
+class QuestionsChatRequest(BaseModel):
+    # Accept either `prompt` (text) or `image` (base64 string) with optional mime
+    prompt: Optional[str] = None
+    image: Optional[str] = None
+    mime: Optional[str] = None
+
+
+@app.post("/questions/chatid")
+async def questions_chat(req: QuestionsChatRequest):
+    """
+    Accepts JSON like { prompt } or { image, mime } and returns { reply }.
+    This mirrors the /chat logic but uses the requested path.
+    """
+    try:
+        # Build prompt/content
+        if req.image:
+            # strip possible data URL prefix
+            img_str = req.image
+            if img_str.startswith("data:"):
+                img_str = img_str.split(",", 1)[1]
+            try:
+                image_bytes = base64.b64decode(img_str)
+            except Exception:
+                raise HTTPException(status_code=400, detail="Invalid base64 image data")
+
+            contents = [
+                {"inlineData": {"mimeType": req.mime or "image/jpeg", "data": image_bytes}},
+                {"text": req.prompt or ""}
+            ]
+        else:
+            contents = [{"text": req.prompt or ""}]
+
+        response = client.models.generate_content(
+            model="gemma-3-27b-it",
+            contents=contents
+        )
+
+        # Return a normalized reply field for the frontend
+        return {"reply": getattr(response, "text", None) or response}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"error": str(e)}
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/login")
+async def login(req: LoginRequest):
+    """
+    Simple mock login endpoint. In production replace with real auth.
+    Returns access_token and user object.
+    """
+    # For demo accept any username/password — return a fake token and user payload
+    token = f"mock-token-{req.username}"
+    user = {"username": req.username, "name": req.username}
+    return {"access_token": token, "token": token, "token_type": "bearer", "user": user}
 
 
 @app.post("/context")
