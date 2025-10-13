@@ -1,39 +1,28 @@
 // src/utils/fetchData.js
+const BASE_URL = "http://localhost:8000"; // update as per your FastAPI URL
 
-// Mock local JSON file (placed in public/mock/data.json)
-const LOCAL_JSON = "/mock/data.json";
-
-// API fallback endpoint
-const API_URL = "https://your-server.com/api/data";
-
-export async function fetchData() {
+export async function getUserChats(userId) {
   try {
-    // Try reading from local JSON file first
-    const localResponse = await fetch(LOCAL_JSON);
-
-    if (localResponse.ok) {
-      const data = await localResponse.json();
-      console.log("✅ Loaded from local JSON");
-      return data;
-    } else {
-      throw new Error("Local JSON not found");
-    }
+    const res = await fetch(`${BASE_URL}/chat/user/${userId}`);
+    if (!res.ok) throw new Error("Failed to fetch user chats");
+    const data = await res.json();
+    console.log("✅ Loaded chats by user");
+    return data;
   } catch (err) {
-    console.warn("⚠️ Local JSON missing, falling back to API...", err);
-
-    // Fallback → actual API call
-    try {
-      const apiResponse = await fetch(API_URL);
-      if (!apiResponse.ok) {
-        throw new Error("API request failed");
-      }
-      const data = await apiResponse.json();
-      console.log("✅ Loaded from server API");
-      return data;
-    } catch (apiErr) {
-      console.error("❌ Failed to fetch data:", apiErr);
-      return null; // or throw apiErr if you want error propagation
-    }
+    console.error("❌ Error loading user chats:", err);
+    return [];
   }
 }
 
+export async function getChatsBySession(sessionId) {
+  try {
+    const res = await fetch(`${BASE_URL}/chat/session/${sessionId}`);
+    if (!res.ok) throw new Error("Failed to fetch session chats");
+    const data = await res.json();
+    console.log("✅ Loaded chats by session");
+    return data;
+  } catch (err) {
+    console.error("❌ Error loading session chats:", err);
+    return [];
+  }
+}

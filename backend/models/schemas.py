@@ -1,67 +1,49 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 
-
-
-# ---------- User ----------
+from pydantic import BaseModel
+from typing import Optional, List
 
 class UserBase(BaseModel):
     username: str
     name: Optional[str] = None
-    level: Optional[int] = None
-    email: Optional[EmailStr] = None
+    level: Optional[int] = 1
+    email: Optional[str] = None
     avatar: Optional[str] = None
-    class_level: Optional[str] = None  # snake_case
+    class_level: Optional[str] = None
     age: Optional[int] = None
     school: Optional[str] = None
 
     class Config:
-        allow_population_by_field_name = True  # allows camelCase from frontend
-        
-# In your schemas.py
-from pydantic import BaseModel, Field
+        orm_mode = True
 
-class UserCreate(BaseModel):
-    username: str
+class UserCreate(UserBase):
     password: str
-    name: str
-    level: int = 1
-    email: str | None = None
-    avatar: str | None = None
-    class_level: int | None 
-    age: int | None = None
-    school: str | None = None
-    
-    class Config:
-        populate_by_name = True  # Allow both field name and alias
 
 class UserLogin(BaseModel):
     username: str
     password: str
 
-
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     password: Optional[str] = None
     level: Optional[int] = None
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     avatar: Optional[str] = None
-    classLevel: Optional[str] = None
+    class_level: Optional[str] = None
     age: Optional[int] = None
     school: Optional[str] = None
-
 
 class UserOut(UserBase):
     id: int
 
-    class Config:
-        orm_mode = True
 # ---------- Chat / Messages ----------
 class Message(BaseModel):
     text: Optional[str] = None
-    image: Optional[str] = None  # base64 string if image
-    sender: str   # "user" or "bot"
-
+    image: Optional[str] = None
+    sender: str
+    session_id: Optional[str] = None
+    user_id: Optional[int] = None  # <-- new
 
 class Chat(BaseModel):
     id: int

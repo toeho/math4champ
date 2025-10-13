@@ -1,57 +1,116 @@
-import requests
-import json
-import random
+from fastapi import APIRouter, Depends, HTTPException ,Header
+from sqlalchemy.orm import Session
+from sqlalchemy import desc
+from models.schemas import Message as MessageSchema, Chat as ChatSchema
+from models.models import Chat, Message
+from deps import get_db
+from google import genai
+import base64, uuid
+import os
+client = genai.Client(api_key="AIzaSyDt6D-1Ss-cJhLGfNhfOTwtjvks1ynQ8ac")
+router = APIRouter(prefix="/chat", tags=["chat"])
 
-BASE_URL = "http://127.0.0.1:8000"
+# Read from environment: True → user must be logged in, False → guest allowed
+CHAT_AUTH_REQUIRED = os.getenv("CHAT_AUTH_REQUIRED", "false").lower() == "true"
 
-def create_session():
-    resp = requests.post(f"{BASE_URL}/session")
-    print("Create Session Response:", resp.json())
-    return resp.json()["sessionId"]
 
-def send_message(session_id, message, is_image=False, image=None):
-    payload = {
-        "sessionId": session_id,
-        "message": message,
-        "isImage": is_image,
-        "image": image
-    }
-    resp = requests.post(f"{BASE_URL}/chat", json=payload)
-    print("Chat Response:", resp.json())
+@router.post("/send", response_model=ChatSchema)
+def send_message(
+    message: MessageSchema,
+    db: Session = Depends(get_db),
+    user_id: int | None = Header(default=None),  # Optional header
+):
+    """
+    Send a message to the bot.
+    If CHAT_AUTH_REQUIRED=True, user_id header is required.
+    If CHAT_AUTH_REQUIRED=False, user_id can be omitted for guest chat.
+    """
 
-def get_context(session_id):
-    payload = {"sessionId": session_id}
-    resp = requests.post(f"{BASE_URL}/context", json=payload)
-    print("Context Response:", resp.json())
+    try:
+        if CHAT_AUTH_REQUIRED and not user_id:
+            raise HTTPException(status_code=401, detail=f"Login required to chat {CHAT_AUTH_REQUIRED}")
 
-def load_image_from_json(file_path="image.json"):
-    with open(file_path, "r") as f:
-        data = json.load(f)
-    return data.get("base")  # 'base' key from JSON
+        session_id = message.session_id or str(uuid.uuid4())  # generate new if not given
 
-if __name__ == "__main__":
-    # Load image once
-    image_base64 = load_image_from_json("image.json")
+        # --- Find or create chat for this session ---
+        chat = db.query(Chat).filter(Chat.session_id == session_id).first()
+        if not chat:
+            chat = Chat(
+                title=message.text[:20] if message.text else "Image Chat",
+                session_id=session_id
+            )
+            db.add(chat)
+            db.commit()
+            db.refresh(chat)
 
-    # 1. Create a new session
-    session_id = create_session()
+        # --- Save user message ---
+        user_msg = Message(
+            text=message.text,
+            image=message.image,
+            sender="user",
+            chat_id=chat.id,
+            user_id=user_id if user_id else None,  # link user if available
+        )
+        db.add(user_msg)
+        db.commit()
 
-    # 2. Prepare jumbled messages
-    messages = [
-        "Hello Gemini",
-        "What am I doing?",
-        "Check this image",
-        "Can you help me?",
-        "Tell me a story"
-    ]
-    random.shuffle(messages)
-
-    # 3. Send 5 messages
-    for msg in messages:
-        if "image" in msg.lower():
-            send_message(session_id, msg, is_image=True, image=image_base64)
+        # --- Prepare Gemini prompt ---
+        prompt = message.text or ""
+        if message.image:
+            image_bytes = base64.b64decode(message.image.split(",")[1]) if message.image.startswith("data:") else base64.b64decode(message.image)
+            contents = [
+                {"inlineData": {"mimeType": "image/jpeg", "data": image_bytes}},
+                {"text": prompt},
+            ]
         else:
-            send_message(session_id, msg)
+            contents = [{"text": prompt}]
 
-    # 4. Retrieve context
-    get_context(session_id)
+        # --- Send to Gemini ---
+        response = client.models.generate_content(
+            model="gemma-3-27b-it",
+            contents=contents,
+        )
+
+        bot_text = getattr(response, "text", "No response received.")
+
+        # --- Save bot reply ---
+        bot_msg = Message(
+            text=bot_text,
+            sender="bot",
+            chat_id=chat.id,
+        )
+        db.add(bot_msg)
+        db.commit()
+        db.refresh(chat)
+
+        return chat
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        db.rollback()
+        raise e
+
+
+# --- New: Get all chats for a user (future user_id integration) ---
+@router.get("/user/{user_id}", response_model=list[ChatSchema])
+def get_chats_by_user(user_id: int, db: Session = Depends(get_db)):
+    if CHAT_AUTH_REQUIRED is False:
+        raise HTTPException(status_code=403, detail="Guest mode active. No user chats available.")
+    
+    chats = (
+        db.query(Chat)
+        .join(Message)
+        .filter(Message.user_id == user_id, Message.sender == "user")
+        .order_by(desc(Chat.id))
+        .all()
+    )
+    return chats
+
+
+# --- New: Get chats by session_id ---
+@router.get("/session/{session_id}", response_model=list[ChatSchema])
+def get_chats_by_session(session_id: str, db: Session = Depends(get_db)):
+    chats = db.query(Chat).filter(Chat.session_id == session_id).all()
+    if not chats:
+        raise HTTPException(status_code=404, detail="No chats for this session")
+    return chats

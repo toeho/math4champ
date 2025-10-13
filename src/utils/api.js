@@ -1,10 +1,8 @@
 import axios from "axios";
-import prompt from "../prompts/mathPrompt.json";
+// import prompt from "../prompts/mathPrompt.json";
 
-// ✅ Your FastAPI backend URL (set this in .env)
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
-// Create an Axios instance for backend
 const backendApi = axios.create({
   baseURL: BACKEND_URL,
   headers: { "Content-Type": "application/json" },
@@ -21,25 +19,30 @@ export const postRequest = async (url, data = {}, params = {}) => {
   return response.data;
 };
 
+// 🧩 Session Management
+let currentSessionId = localStorage.getItem("session_id") || null;
+
 // --- Send message to FastAPI backend ---
 export const sendToGemini = async (input) => {
   try {
-    // Prepare payload — if image exists, include base64 string
+    // Load or create session ID
+    if (!currentSessionId) {
+      currentSessionId = crypto.randomUUID();
+      localStorage.setItem("session_id", currentSessionId);
+    }
+
     const payload = {
-      text: input.text ? `${input.text} ${prompt.math_prompt}` : prompt.math_prompt,
-      image: input.image?.data || null, // ensure we send raw base64 if image present
+      text: input.text || "",
+      image: input.image?.data || null,
       sender: "user",
+      session_id: currentSessionId, // ✅ attach session ID
     };
 
-    // 👇 Send to FastAPI backend
     const response = await postRequest("/chat/send", payload);
 
-    // ✅ Extract Gemini’s bot message (backend returns chat with messages)
     const botMessage =
-      response.messages?.find((m) => m.sender === "bot")?.text ||
-      "No reply.";
+      response.messages?.find((m) => m.sender === "bot")?.text || "No reply.";
 
-    // ✅ Return structure consistent with frontend logic
     return {
       candidates: [
         {
@@ -53,4 +56,19 @@ export const sendToGemini = async (input) => {
     console.error("❌ Backend call failed:", error);
     throw error;
   }
+};
+
+export const resetSession = () => {
+  currentSessionId = null;
+
+  // 🧹 Clean all storage
+  localStorage.removeItem("session_id");
+  localStorage.removeItem("chatMessages");
+  sessionStorage.clear();
+
+  console.log("🔄 Chat session reset successfully");
+
+  // ✅ Force navigation reset (not just reload)
+  window.history.replaceState({}, document.title, "/"); // clear React Router state
+  window.location.reload(); // trigger re-render of Home
 };

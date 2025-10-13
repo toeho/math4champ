@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css"
 import App from "./App.jsx";
-import { UserProvider } from "./contexts/UserProvider";
+import { UserProvider } from "./contexts/UserContext";
 import { LanguageProvider } from "./contexts/LanguageProvider";
 import { HistoryProvider } from "./contexts/HistoryProvider";
 

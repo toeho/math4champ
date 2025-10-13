@@ -1,7 +1,7 @@
 // src/pages/History.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchData } from "../utils/fetchData";
+import { getUserChats } from "../utils/fetchData";
 
 export default function History() {
   const [history, setHistory] = useState([]);
@@ -9,12 +9,14 @@ export default function History() {
 
   useEffect(() => {
     (async () => {
-      const data = await fetchData();
-      if (data?.history) setHistory(data.history);
+      // Assuming userId = 1 for demo (later replace with logged-in user)
+      const data = await getUserChats(1);
+      setHistory(data);
     })();
   }, []);
 
   const handleClick = (chat) => {
+    // 👇 go back to Home with old chat messages
     navigate("/", { state: { messages: chat.messages } });
   };
 
@@ -31,9 +33,9 @@ export default function History() {
               onClick={() => handleClick(chat)}
               className="bg-white/10 p-3 rounded-xl hover:bg-white/20 cursor-pointer"
             >
-              <h2 className="font-semibold text-sm">{chat.title}</h2>
+              <h2 className="font-semibold text-sm truncate">{chat.title}</h2>
               <p className="text-xs text-gray-300 truncate">
-                {chat.messages.map((m) => m.text).join(" · ")}
+                {chat.messages?.map((m) => m.text || "[Image]").join(" · ")}
               </p>
             </div>
           ))}

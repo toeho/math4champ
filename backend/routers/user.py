@@ -1,5 +1,4 @@
-# routes/users.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from models.schemas import UserCreate, UserLogin, UserOut, UserUpdate
 from models.models import User
@@ -9,31 +8,31 @@ from datetime import timedelta
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-# ---------- Signup ----------
+# ---------------- Signup ----------------
 @router.post("/signup", response_model=UserOut)
 def signup(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == user.username).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="User already exists")
+    existing_user = db.query(User).filter(User.username == user.username).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
 
     new_user = User(
         username=user.username,
-        password=user.password,  # ⚠️ should hash later
-        name=user.name,
-        level=user.level,
+        password=user.password,  # plain text for demo
+        name=user.name or user.username,
+        level=user.level or 1,
         email=user.email,
         avatar=user.avatar,
-        classLevel=user.class_level,
+        class_level=user.class_level,
         age=user.age,
         school=user.school,
     )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
 
-
-# ---------- Login ----------
+# ---------------- Login ----------------
 @router.post("/login")
 def login(data: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == data.username).first()
@@ -42,24 +41,19 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
 
     access_token = create_access_token(
         data={"sub": db_user.username},
-        expires_delta=timedelta(minutes=60),
+        expires_delta=timedelta(hours=1),
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-
-# ---------- Get Profile ----------
+# ---------------- Get current user ----------------
 @router.get("/me", response_model=UserOut)
-def get_user(
-    username: str = Depends(verify_token),
-    db: Session = Depends(get_db)
-):
+def get_user(username: str = Depends(verify_token), db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == username).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-
-# ---------- Update Profile ----------
+# ---------------- Update user ----------------
 @router.put("/update", response_model=UserOut)
 def update_user(
     updates: UserUpdate,
@@ -72,7 +66,7 @@ def update_user(
 
     update_data = updates.dict(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(db_user, key, value)
+        setattr(db_user, key, value)  # no hashing
 
     db.commit()
     db.refresh(db_user)

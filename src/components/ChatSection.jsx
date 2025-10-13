@@ -19,9 +19,14 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
   const messagesEndRef = useRef(null);
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
-  useEffect(() => {
-    if (!loadMessages) setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
-  }, [lang]);
+useEffect(() => {
+  if (!loadMessages) {
+    setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
+  } else {
+    setMessages(loadMessages); // 👈 load history properly
+  }
+}, [lang, loadMessages]);
+
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
