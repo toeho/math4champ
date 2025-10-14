@@ -3,10 +3,12 @@ import { Image } from "lucide-react";
 import { sendToGemini } from "../utils/api";
 import { useLanguage } from "../hooks/useLanguage";
 import { useHistoryStore } from "../hooks/useHistory";
+import { useUser } from "../contexts/UserContext"; // ✅ import user context
 
 export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading, setLoading, loadMessages }) {
   const { lang } = useLanguage();
   const { addConversation } = useHistoryStore();
+  const { user } = useUser(); // ✅ get current logged-in user
 
   const [messages, setMessages] = useState(
     loadMessages || [
@@ -19,14 +21,13 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
   const messagesEndRef = useRef(null);
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
-useEffect(() => {
-  if (!loadMessages) {
-    setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
-  } else {
-    setMessages(loadMessages); // 👈 load history properly
-  }
-}, [lang, loadMessages]);
-
+  useEffect(() => {
+    if (!loadMessages) {
+      setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
+    } else {
+      setMessages(loadMessages);
+    }
+  }, [lang, loadMessages]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -40,44 +41,47 @@ useEffect(() => {
     reader.readAsDataURL(file);
   };
 
-const handleSend = async () => {
-  if ((!input.trim() && !image) || loading) return;
+  const handleSend = async () => {
+    if ((!input.trim() && !image) || loading) return;
+    if (!user?.username) {
+      console.error("User not logged in");
+      return;
+    }
 
-  const userMessage = input.trim();
+    const userMessage = input.trim();
 
-  // show user message immediately
-  const userEntries = [];
-  if (userMessage) userEntries.push({ text: userMessage, sender: "user" });
-  // if (image) userEntries.push({ image: image.data, sender: "user" });
-  setMessages((prev) => [...prev, ...userEntries]);
-  setInput("");
+    // show user message immediately
+    const userEntries = [];
+    if (userMessage) userEntries.push({ text: userMessage, sender: "user" });
+    setMessages((prev) => [...prev, ...userEntries]);
+    setInput("");
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await sendToGemini({
-      text: userMessage || null,
-      image: image || null,
-    });
+      // ✅ send username to backend
+      const response = await sendToGemini(
+        { text: userMessage || null, image: image || null },
+        user.username
+      );
 
-    const reply =
-      response.candidates?.[0]?.content?.parts?.[0]?.text ||
-      (lang === "hi" ? "कोई उत्तर नहीं मिला।" : "No response received.");
+      const reply =
+        response.candidates?.[0]?.content?.parts?.[0]?.text ||
+        (lang === "hi" ? "कोई उत्तर नहीं मिला।" : "No response received.");
 
-    setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
-    addConversation([...messages, ...userEntries, { text: reply, sender: "bot" }]);
-  } catch (error) {
-    console.error(error);
-    setMessages((prev) => [
-      ...prev,
-      { text: lang === "hi" ? "त्रुटि हुई।" : "An error occurred.", sender: "bot" },
-    ]);
-  } finally {
-    setLoading(false);
-    setImage(null);
-  }
-};
-
+      setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
+      addConversation([...messages, ...userEntries, { text: reply, sender: "bot" }]);
+    } catch (error) {
+      console.error(error);
+      setMessages((prev) => [
+        ...prev,
+        { text: lang === "hi" ? "त्रुटि हुई।" : "An error occurred.", sender: "bot" },
+      ]);
+    } finally {
+      setLoading(false);
+      setImage(null);
+    }
+  };
 
   const handleKeyDown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } };
 

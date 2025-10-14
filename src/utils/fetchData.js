@@ -1,12 +1,13 @@
 // src/utils/fetchData.js
 const BASE_URL = "http://localhost:8000"; // update as per your FastAPI URL
 
-export async function getUserChats(userId) {
+export async function getUserChats(username) {
   try {
-    const res = await fetch(`${BASE_URL}/chat/user/${userId}`);
+    console.log(username)
+    const res = await fetch(`${BASE_URL}/chat/user/${username}`);
     if (!res.ok) throw new Error("Failed to fetch user chats");
     const data = await res.json();
-    console.log("✅ Loaded chats by user");
+    console.log("✅ Loaded chats for", username, data);
     return data;
   } catch (err) {
     console.error("❌ Error loading user chats:", err);

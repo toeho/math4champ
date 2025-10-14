@@ -1,5 +1,5 @@
 import axios from "axios";
-// import prompt from "../prompts/mathPrompt.json";
+import { useUser } from "../contexts/UserContext";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
@@ -22,8 +22,8 @@ export const postRequest = async (url, data = {}, params = {}) => {
 // 🧩 Session Management
 let currentSessionId = localStorage.getItem("session_id") || null;
 
-// --- Send message to FastAPI backend ---
-export const sendToGemini = async (input) => {
+// --- Send message to FastAPI backend using username ---
+export const sendToGemini = async (input, username) => {
   try {
     // Load or create session ID
     if (!currentSessionId) {
@@ -38,7 +38,10 @@ export const sendToGemini = async (input) => {
       session_id: currentSessionId, // ✅ attach session ID
     };
 
-    const response = await postRequest("/chat/send", payload);
+    if (!username) throw new Error("Username is required to send messages");
+
+    // Call backend with username as path variable
+    const response = await postRequest(`/chat/send/${username}`, payload);
 
     const botMessage =
       response.messages?.find((m) => m.sender === "bot")?.text || "No reply.";
