@@ -41,10 +41,11 @@ export const sendToGemini = async (input, username) => {
     if (!username) throw new Error("Username is required to send messages");
 
     // Call backend with username as path variable
-    const response = await postRequest(`/chat/send/${username}`, payload);
+    const response = await postRequest(`/chat/send/instant/${username}`, payload);
+    console.log(response)
 
     const botMessage =
-      response.messages?.find((m) => m.sender === "bot")?.text || "No reply.";
+      response.bot_message.text || "No reply.";
 
     return {
       candidates: [
