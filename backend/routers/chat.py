@@ -38,9 +38,14 @@ def send_message_instant(
         chat = db.query(Chat).filter(Chat.session_id == session_id).first()
         if not chat:
             chat = Chat(
-                title=message.text[:20] if message.text else "Image Chat",
+                title= llm.get_chat_title(message.text),
                 session_id=session_id,
             )
+            # chat = Chat(
+            #     title=message.text[:20] if message.text else "Image Chat",
+            #     title= llm.get_chat_title(message.text),
+            #     session_id=session_id,
+            # )
             db.add(chat)
             db.commit()
             db.refresh(chat)

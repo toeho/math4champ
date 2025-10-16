@@ -14,7 +14,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 
 def load_prompt_for_class(class_number: int) -> dict:
     """Load the JSON prompt file for a given class."""
-    file_path = f"prompts/class5.json"
+    file_path = f"prompts/two.json"
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -51,3 +51,22 @@ Respond concisely.
 
     return response["choices"][0]["message"]["content"].strip()
 
+
+
+def get_chat_title(text: str) -> str:
+    """
+    Takes a plain string input and returns the LLM response as a string.
+    """
+    try:
+        messages = [
+            {"role": "system", "content": "Generate an appropriate title for this message to be saved as chat title in the database, it will have more messages from user and llm, give most appropriate title in very short 3 or 4 words"},
+            {"role": "user", "content": text}
+        ]
+        response = completion(
+            model=MODEL_NAME,
+            messages=messages,
+            api_key=API_KEY,
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        return f"Error: {str(e)}"
