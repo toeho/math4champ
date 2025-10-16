@@ -7,6 +7,8 @@ from deps import get_db
 from google import genai
 import base64, uuid
 import os
+import llm
+
 client = genai.Client(api_key="AIzaSyDt6D-1Ss-cJhLGfNhfOTwtjvks1ynQ8ac")
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -54,25 +56,48 @@ def send_message_instant(
         db.add(user_msg)
         db.commit()
 
-        # --- Prepare Gemini prompt ---
-        prompt = message.text or ""
-        contents = [{"text": prompt}]
-        if message.image:
-            image_bytes = base64.b64decode(
-                message.image.split(",")[1] if message.image.startswith("data:") else message.image
-            )
-            contents = [
-                {"inlineData": {"mimeType": "image/jpeg", "data": image_bytes}},
-                {"text": prompt},
-            ]
-
-        # --- Send to Gemini ---
-        response = client.models.generate_content(
-            model="gemma-3-27b-it",
-            contents=contents,
+        # --- Fetch previous 6 messages as context ---
+        previous_messages = (
+            db.query(Message)
+            .filter(Message.chat_id == chat.id)
+            .order_by(desc(Message.id))
+            .limit(6)
+            .all()
         )
 
-        bot_text = getattr(response, "text", "No response received.")
+        # Reverse so oldest first
+        previous_messages.reverse()
+        # Combine messages into readable context text
+        last_context = "\n".join(
+            [f"{msg.sender.capitalize()}: {msg.text}" for msg in previous_messages if msg.text]
+        )
+
+
+
+        if message.image:
+    # Extract base64 cleanly (support both with/without 'data:' prefix)
+            image_b64 = (
+                message.image.split(",")[1]
+                if message.image.startswith("data:")
+                else message.image
+            )
+            bot_text = llm.generate_hint(
+                question=message.text,
+                last_context=last_context,
+                image_b64=image_b64
+            )
+        
+        else:
+            bot_text = llm.generate_hint(
+                question=message.text,
+                last_context=last_context
+
+            )
+
+       
+        #try
+        # bot_text=llm.generate_hint(message.text)
+        print(bot_text)
 
         # --- Save bot reply ---
         bot_msg = Message(
@@ -140,25 +165,49 @@ def send_message_by_username(
         db.add(user_msg)
         db.commit()
 
-        # --- Prepare Gemini prompt ---
-        prompt = message.text or ""
-        contents = [{"text": prompt}]
-        if message.image:
-            image_bytes = base64.b64decode(
-                message.image.split(",")[1] if message.image.startswith("data:") else message.image
-            )
-            contents = [
-                {"inlineData": {"mimeType": "image/jpeg", "data": image_bytes}},
-                {"text": prompt},
-            ]
-
-        # --- Send to Gemini ---
-        response = client.models.generate_content(
-            model="gemma-3-27b-it",
-            contents=contents,
+        # --- Fetch previous 6 messages as context ---
+        previous_messages = (
+            db.query(Message)
+            .filter(Message.chat_id == chat.id)
+            .order_by(desc(Message.id))
+            .limit(6)
+            .all()
         )
 
-        bot_text = getattr(response, "text", "No response received.")
+        # Reverse so oldest first
+        previous_messages.reverse()
+        # Combine messages into readable context text
+        last_context = "\n".join(
+            [f"{msg.sender.capitalize()}: {msg.text}" for msg in previous_messages if msg.text]
+        )
+
+
+
+        if message.image:
+    # Extract base64 cleanly (support both with/without 'data:' prefix)
+            image_b64 = (
+                message.image.split(",")[1]
+                if message.image.startswith("data:")
+                else message.image
+            )
+            bot_text = llm.generate_hint(
+                question=message.text,
+                last_context=last_context,
+                image_b64=image_b64
+            )
+        
+        else:
+            bot_text = llm.generate_hint(
+                question=message.text,
+                last_context=last_context
+
+            )
+
+       
+        #try
+        # bot_text=llm.generate_hint(message.text)
+        print(bot_text)
+
 
         # --- Save bot reply ---
         bot_msg = Message(
