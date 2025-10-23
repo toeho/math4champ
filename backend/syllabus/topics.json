@@ -1,0 +1,118 @@
+{
+  "class_1": {
+    "Numbers and Counting": [
+      { "chapter": "A Day at the Beach", "concept": "Learning to count objects in groups and understand grouping in numbers." },
+      { "chapter": "Fun with Numbers", "concept": "Understanding numbers from 1 to 100, counting, and sequencing." },
+      { "chapter": "Grouping and Sharing", "concept": "Basic concepts of multiplication and division through equal grouping." }
+    ],
+    "Shapes and Space": [
+      { "chapter": "Shapes Around Us", "concept": "Introduction to 3D shapes like cubes, cylinders, cones, and spheres." },
+      { "chapter": "Shadow Story (Togalu)", "concept": "Exploring 2D shapes and their properties through shadow play." },
+      { "chapter": "Playing with Lines", "concept": "Understanding lines, directions, and orientation of lines." }
+    ],
+    "Measurement and Time": [
+      { "chapter": "Rani’s Gift", "concept": "Introduction to measurement using real-life examples." },
+      { "chapter": "Which Season is it?", "concept": "Understanding measurement of time and seasonal changes." }
+    ],
+    "Money and Data": [
+      { "chapter": "Fun at the Fair", "concept": "Learning about money, buying, and selling simple items." },
+      { "chapter": "Data Handling", "concept": "Collecting, organizing, and representing simple data sets." },
+      { "chapter": "Decoration for Festival", "concept": "Learning basic addition and subtraction through festive decoration activities." }
+    ]
+  },
+  "class_2": {
+    "Numbers and Operations": [
+      { "chapter": "What’s in a Name?", "concept": "Recognizing and representing numbers in different forms." },
+      { "chapter": "Double Century", "concept": "Understanding numbers up to 200 and performing basic operations." },
+      { "chapter": "House of Hundreds - I", "concept": "Learning the place value system and number patterns up to hundreds." },
+      { "chapter": "House of Hundreds - II", "concept": "Continuing with place value, expanded form, and comparison of numbers." },
+      { "chapter": "Give and Take", "concept": "Mastering addition and subtraction with carry-over and borrowing." }
+    ],
+    "Shapes and Patterns": [
+      { "chapter": "Toy Joy", "concept": "Counting, comparing, and arranging objects using toys as examples." },
+      { "chapter": "Fun with Shapes", "concept": "Exploring 2D and 3D shapes and their characteristics." },
+      { "chapter": "Raksha Bandhan", "concept": "Using mathematical thinking in cultural contexts and celebrations." }
+    ],
+    "Measurement and Time": [
+      { "chapter": "Filling and Lifting", "concept": "Measuring capacity and weight through hands-on examples." },
+      { "chapter": "Time Goes On", "concept": "Understanding time, days, months, and daily schedules." }
+    ],
+    "Money and Data": [
+      { "chapter": "Fair Share", "concept": "Understanding division and equal sharing concepts." },
+      { "chapter": "Fun at Class Party!", "concept": "Applying addition and subtraction in real-life party scenarios." },
+      { "chapter": "The Surajkund Fair", "concept": "Integrating concepts of money, measurement, and data handling." }
+    ]
+  },
+  "class_3": {
+    "Numbers and Operations": [
+      { "chapter": "Fun with Numbers", "concept": "Counting, comparing, and understanding number patterns." },
+      { "chapter": "Give and Take", "concept": "Learning addition and subtraction through daily life situations." },
+      { "chapter": "How Many Times?", "concept": "Introduction to multiplication as repeated addition." },
+      { "chapter": "Can We Share?", "concept": "Understanding division as equal sharing." }
+    ],
+    "Shapes and Patterns": [
+      { "chapter": "Where to Look From", "concept": "Understanding different viewpoints and perspectives of objects." },
+      { "chapter": "Shapes and Designs", "concept": "Recognizing 2D shapes and creating patterns." },
+      { "chapter": "Play with Patterns", "concept": "Observing and creating number and shape patterns." }
+    ],
+    "Measurement and Time": [
+      { "chapter": "Long and Short", "concept": "Comparing lengths and measuring using standard and non-standard units." },
+      { "chapter": "Who is Heavier?", "concept": "Comparing weights of different objects using balance and estimation." },
+      { "chapter": "Time Goes On", "concept": "Learning to read the clock and understand time intervals." },
+      { "chapter": "Jugs and Mugs", "concept": "Understanding capacity and volume through real-world examples." }
+    ],
+    "Money and Data": [
+      { "chapter": "Rupees and Paise", "concept": "Introduction to money, currency conversion, and transactions." },
+      { "chapter": "Smart Charts!", "concept": "Representing data using pictographs and simple charts." }
+    ]
+  },
+  "class_4": {
+    "Numbers and Operations": [
+      { "chapter": "Thousands Around Us", "concept": "Understanding place value up to thousands and large number comparisons." },
+      { "chapter": "Equal Groups", "concept": "Building understanding of multiplication through equal grouping." },
+      { "chapter": "Sharing and Measuring", "concept": "Using division and measurement in everyday contexts." }
+    ],
+    "Shapes and Patterns": [
+      { "chapter": "Shapes Around Us", "concept": "Identifying and classifying 3D shapes in the environment." },
+      { "chapter": "Hide and Seek", "concept": "Understanding open and closed figures, and spatial reasoning." },
+      { "chapter": "Pattern Around Us", "concept": "Exploring patterns and sequences in numbers and shapes." },
+      { "chapter": "Fun with Symmetry", "concept": "Understanding symmetry in shapes and designs." }
+    ],
+    "Measurement and Time": [
+      { "chapter": "Measuring Length", "concept": "Measuring and comparing lengths using standard units." },
+      { "chapter": "Weigh it, Pour it", "concept": "Understanding measurement of weight and capacity." },
+      { "chapter": "Ticking Clocks and Turning Calendar", "concept": "Learning to read clocks, calendars, and measure time intervals." }
+    ],
+    "Data and Application": [
+      { "chapter": "The Cleanest Village", "concept": "Applying data handling, estimation, and comparisons in a community setting." },
+      { "chapter": "Elephants, Tigers, and Leopards", "concept": "Using data to compare and analyze animal populations and patterns." },
+      { "chapter": "The Transport Museum", "concept": "Using data, time, and measurement in the context of travel and transport." },
+      { "chapter": "Data Handling", "concept": "Collecting, organizing, and interpreting information using charts and tables." }
+    ]
+  },
+  "class_5": {
+    "Numbers and Operations": [
+      { "chapter": "We the Travellers — I", "concept": "Understanding travel, distance, and time through journeys." },
+      { "chapter": "We the Travellers — II", "concept": "Applying distance, speed, and direction concepts in travel." },
+      { "chapter": "Fractions", "concept": "Learning to represent parts of a whole using fractions." },
+      { "chapter": "Animal Jumps", "concept": "Using multiplication, distance, and data comparison through animal jumps." }
+    ],
+    "Geometry and Patterns": [
+      { "chapter": "Angles as Turns", "concept": "Understanding angles as turns and measuring them using degrees." },
+      { "chapter": "Shapes and Patterns", "concept": "Exploring geometry, tessellations, and repeating designs." },
+      { "chapter": "Symmetrical Designs", "concept": "Creating and identifying symmetrical figures and patterns." },
+      { "chapter": "Grandmother’s Quilt", "concept": "Understanding patterns, shapes, and fractions through creative designs." }
+    ],
+    "Measurement and Time": [
+      { "chapter": "Far and Near", "concept": "Understanding scale and distance through maps and drawings." },
+      { "chapter": "The Dairy Farm", "concept": "Exploring volume, capacity, and multiplication through real-world examples." },
+      { "chapter": "Weight and Capacity", "concept": "Comparing and calculating weight and capacity using standard units." },
+      { "chapter": "Racing Seconds", "concept": "Learning about time intervals, speed, and comparison using races." }
+    ],
+    "Data and Mapping": [
+      { "chapter": "Coconut Farm", "concept": "Understanding area, perimeter, and multiplication through farming examples." },
+      { "chapter": "Maps and Locations", "concept": "Understanding directions, maps, and coordinates." },
+      { "chapter": "Data Through Pictures", "concept": "Interpreting and representing data using pictographs and bar graphs." }
+    ]
+  }
+}
