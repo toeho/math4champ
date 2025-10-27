@@ -13,6 +13,10 @@ class UserBase(BaseModel):
     class_level: Optional[str] = None
     age: Optional[int] = None
     school: Optional[str] = None
+    # Backend-only tracking (exposed read-only in responses)
+    total_attempts: Optional[int] = 0
+    correct_attempts: Optional[int] = 0
+    score: Optional[float] = 0.0
 
     class Config:
         orm_mode = True

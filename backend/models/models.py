@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -18,6 +18,10 @@ class User(Base):
     class_level = Column(String, nullable=True)
     age = Column(Integer, nullable=True)
     school = Column(String, nullable=True)
+    # Tracking attempts and scoring (updated automatically by backend checks)
+    total_attempts = Column(Integer, default=0)
+    correct_attempts = Column(Integer, default=0)
+    score = Column(Float, default=0.0)
 
 # ---------- Chat ----------
 class Chat(Base):
