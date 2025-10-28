@@ -62,6 +62,7 @@ export async function fetchUser(token) {
 }
 
 export async function saveUser(updates, token) {
+  console.log(updates)
   const res = await fetch(`${API_URL}/update`, {
     method: "PUT",
     headers: {

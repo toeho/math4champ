@@ -76,13 +76,22 @@ const signup = async (username, password) => {
 };
 
 
-  const updateUser = async (updates) => {
-    const token = localStorage.getItem("token");
-    if (!user || !token) return null;
-    const updated = await saveUser(updates, token);
-    if (updated) setUser(updated);
-    return updated;
+const updateUser = async (updates) => {
+  const token = localStorage.getItem("token");
+  if (!user || !token) return null;
+
+  // Convert frontend camelCase → backend snake_case
+  const payload = {
+    ...updates,
+    class_level: updates.classLevel, // ✅ map key
   };
+  delete payload.classLevel; // remove duplicate
+
+  const updated = await saveUser(payload, token);
+  if (updated) setUser(updated);
+  return updated;
+};
+
 
   const logout = () => {
     localStorage.removeItem("token");
