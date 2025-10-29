@@ -1,29 +1,27 @@
 # ===== Stage 1: Builder =====
 FROM python:3.11 AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements file first for better layer caching
 COPY requirements.txt .
 
-# Install dependencies in a temporary folder
-RUN pip install --no-cache-dir -r requirements.txt -t /install
+# Install all dependencies normally (so binaries like uvicorn are generated)
+RUN pip install --no-cache-dir -r requirements.txt
 
 
 # ===== Stage 2: Final (Slim) Image =====
 FROM python:3.11-slim AS final
 
-# Set working directory
 WORKDIR /app
 
-# Copy only dependencies from builder stage
-COPY --from=builder /install /usr/local/lib/python3.11/site-packages/
+# Copy installed packages and binaries
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copy your application code
+# Copy project files
 COPY . .
 
-# Expose port (optional)
+EXPOSE 8000
 
-# Set default command
+# Start FastAPI with uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
