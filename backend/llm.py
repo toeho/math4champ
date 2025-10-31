@@ -60,17 +60,42 @@ def load_prompt_for_class(class_number: int) -> dict:
 #         return {"correct": False, "feedback": f"LLM error: {e}", "correct_answer": None, "final": False}
 
 
-def generate_hint(question: str,  last_context: str = "", image_b64 :str | None = None ) -> str:
-    prompt = f"""
-Student question: {question}
-Previous context: {last_context}
-Respond concisely.
-"""
-    system_prompt=load_prompt_for_class(5)
+def generate_hint(question: str,  last_context: str = "", image_b64 :str | None = None, user_class: int | str | None = None ) -> str:
+    """Generate a concise hint using a class-specific prompt.
 
-    # Build message content
+    Args:
+        question: The student's question text.
+        last_context: Recent chat context to include.
+        image_b64: Optional base64 PNG image string.
+        user_class: Class level (int like 5 or string like 'class_5' or '5').
+
+    Returns:
+        The LLM's reply string.
+    """
+
+    # Normalize/parse user_class into an integer class number used by prompt loader
+    def _class_to_number(c):
+        if c is None:
+            return 5
+        try:
+            if isinstance(c, int):
+                return int(c)
+            s = str(c).strip()
+            if s.startswith("class_"):
+                s = s.split("_", 1)[1]
+            return int(s)
+        except Exception:
+            return 5
+
+    class_number = _class_to_number(user_class)
+    system_prompt = load_prompt_for_class(class_number)
+
+    # Build message content and include the student class in the prompt
     content = [
-        {"type": "text", "text": f"Student question: {question}\nPrevious context: {last_context}\nRespond concisely."}
+        {
+            "type": "text",
+            "text": f"Student class: class_{class_number}\nStudent question: {question}\nPrevious context: {last_context}\nRespond concisely."
+        }
     ]
 
     # If an image is provided, attach it
@@ -199,6 +224,11 @@ def get_chat_title(text: str) -> str:
 #         return {"final": False, "correct": False, "feedback": "Error or invalid JSON"}
 
 def check_answer(conversation=None, question=None, answer=None, context=None, class_topics=None):
+
+
+
+
+
     """
     Evaluates if the student's last message is a final answer and whether it's correct.
     Uses LiteLLM to call Gemini (or any configured model).

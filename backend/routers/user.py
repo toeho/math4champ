@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from models.schemas import UserCreate, UserLogin, UserOut, UserUpdate
 from models.models import User
-from deps import get_db
+from toeho.backend.helper import get_db
 from auth import create_access_token, verify_token
 from datetime import timedelta
 

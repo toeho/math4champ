@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from models.schemas import Message as MessageSchema, Chat as ChatSchema
 from models.models import Chat, Message,User
-from deps import get_db
+from toeho.backend.helper import get_db
 import base64, uuid
 import os, json
 from pathlib import Path
@@ -379,12 +379,14 @@ def send_message_instant(
             bot_text = llm.generate_hint(
                 question=message.text,
                 last_context=last_context,
-                image_b64=image_b64,
+                    image_b64=image_b64,
+                    user_class=user.class_level or user.level,
             )
         else:
             bot_text = llm.generate_hint(
                 question=message.text,
                 last_context=last_context,
+                user_class=user.class_level or user.level,
             )
 
         print(bot_text)
@@ -472,9 +474,8 @@ def send_message_by_username(
         )
 
 
-
         if message.image:
-    # Extract base64 cleanly (support both with/without 'data:' prefix)
+            # Extract base64 cleanly (support both with/without 'data:' prefix)
             image_b64 = (
                 message.image.split(",")[1]
                 if message.image.startswith("data:")
@@ -483,14 +484,14 @@ def send_message_by_username(
             bot_text = llm.generate_hint(
                 question=message.text,
                 last_context=last_context,
-                image_b64=image_b64
+                image_b64=image_b64,
+                user_class=user.class_level or user.level,
             )
-        
         else:
             bot_text = llm.generate_hint(
                 question=message.text,
-                last_context=last_context
-
+                last_context=last_context,
+                user_class=user.class_level or user.level,
             )
 
        

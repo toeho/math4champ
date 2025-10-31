@@ -23,7 +23,16 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
 
   useEffect(() => {
     if (!loadMessages) {
-      setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
+      // setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
+      setMessages([
+      {
+        text:
+          lang === "hi"
+            ? "मैं आपकी मदद के लिए तैयार हूँ! आप ऐसे सवाल पूछ सकते हैं:\n• समीकरण हल करें\n• स्टेप्स समझाएँ\n• सवाल की फोटो अपलोड करें\n• कोई भी गणित का कॉन्सेप्ट समझें"
+            : "I'm ready to help! You can ask things like:\n• Solve equations\n• Show steps\n• Upload a picture of a problem\n• Explain any math concept",
+        sender: "bot"
+      }
+    ]);
     } else {
       setMessages(loadMessages);
     }
