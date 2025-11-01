@@ -4,7 +4,7 @@ import jwt
 
 from models.schemas import ExploreData, Progress, Practice, Strengths, WeeklyGoal
 from models.models import User
-from toeho.backend.helper import get_db
+from helper import get_db
 from sqlalchemy.orm import Session
 from auth import SECRET_KEY, ALGORITHM
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from models.schemas import Chat as ChatSchema
 from models.models import Chat
-from toeho.backend.helper import get_db
+from helper import get_db
 
 router = APIRouter(prefix="/history", tags=["history"])
 

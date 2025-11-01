@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pathlib import Path
 import json
 
-from toeho.backend.helper import get_user_class_number
+from helper import get_user_class_number
 
 router = APIRouter(prefix="/topics", tags=["topics"])
 
