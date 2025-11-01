@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // Flag from .env
-const useApi = import.meta.env.VITE_EXPLORE_CALL === "true";
+const useApi = true;
 
 // Backend API base
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
