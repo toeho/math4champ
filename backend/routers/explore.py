@@ -219,7 +219,7 @@ def get_explore(
         accuracy=accuracy,
         practice=Practice(
             problems=total,
-            minutes=practice_minutes,
+            minutes=int(practice_minutes),
             streak=0
         ),
         strengths=Strengths(
