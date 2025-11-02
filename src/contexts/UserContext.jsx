@@ -1,5 +1,6 @@
 // src/components/UserContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { fetchUser, saveUser, loginUser, signupUser } from "../utils/userApi";
 
 export const UserContext = createContext();
@@ -19,6 +20,8 @@ export function UserProvider({ children }) {
     (async () => {
       const token = localStorage.getItem("token");
       if (token) {
+        // Ensure axios will send the Authorization header for subsequent requests
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         const u = await fetchUser(token);
         if (u) setUser(u);
       }
@@ -31,6 +34,8 @@ export function UserProvider({ children }) {
       const data = await loginUser({ username, password });
       if (data.access_token) {
         localStorage.setItem("token", data.access_token);
+        // Set axios default Authorization header so all axios requests include the token
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
         const u = await fetchUser(data.access_token);
         setUser(u);
       }
@@ -95,6 +100,8 @@ const updateUser = async (updates) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    // Remove axios default header
+    delete axios.defaults.headers.common["Authorization"];
     setUser(null);
   };
 

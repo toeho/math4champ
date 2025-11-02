@@ -48,6 +48,7 @@ class Message(BaseModel):
     sender: str
     session_id: Optional[str] = None
     user_id: Optional[int] = None  # <-- new
+    time_taken: Optional[float] = 0.0
 
 class Chat(BaseModel):
     id: int

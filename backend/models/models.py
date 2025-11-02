@@ -22,6 +22,7 @@ class User(Base):
     total_attempts = Column(Integer, default=0)
     correct_attempts = Column(Integer, default=0)
     score = Column(Float, default=0.0)
+    total_time_taken = Column(Float, default=0.0)
 
 # ---------- Chat ----------
 class Chat(Base):

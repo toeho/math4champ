@@ -295,7 +295,21 @@ def send_message_instant(
         db.add(user_msg)
         db.commit()
 
-       
+        # ✅ Update user's time metrics
+        if message.time_taken and message.time_taken > 0:
+            # Use the column expression (User.total_time_taken) as the key
+            # — don't use the instance value `user.total_time_taken` which is a float
+            # (that caused the "got 0.0" error when used as a dict key).
+            from sqlalchemy import func
+
+            # Safely add time_taken; coalesce handles NULLs in the DB.
+            db.query(User).filter(User.id == user_id).update(
+                {
+                    User.total_time_taken: (func.coalesce(User.total_time_taken, 0.0) + (message.time_taken)/60),
+                },
+                synchronize_session=False,
+            )
+            db.commit()
         #  Check if user has given final answer
         
         try:
@@ -336,18 +350,55 @@ def send_message_instant(
 
             if isinstance(judge, dict):
                 if judge.get("final"):
-                    u = db.query(User).filter(User.id == user_id).first()
-                    if u:
-                        u.total_attempts = (u.total_attempts or 0) + 1
-                        if judge.get("correct"):
-                            print("✅ correct answer", flush=True)
-                            u.correct_attempts = (u.correct_attempts or 0) + 1
-                            u.score = (u.score or 0.0) + 1.0
+                    # Use atomic UPDATEs to avoid race conditions and ensure counters increment correctly.
+                    try:
+                        is_correct = bool(judge.get("correct"))
+
+                        if is_correct:
+                            print("✅ correct answer (atomic update)", flush=True)
+                            db.query(User).filter(User.id == user_id).update(
+                                {
+                                    User.total_attempts: (User.total_attempts + 1),
+                                    User.correct_attempts: (User.correct_attempts + 1),
+                                    User.score: (User.score + 1.0),
+                                },
+                                synchronize_session=False,
+                            )
                         else:
-                            print("❌ incorrect answer", flush=True)
-                            u.score = max(0.0, (u.score or 0.0) - 0.25)
-                        db.add(u)
+                            print("❌ incorrect answer (atomic update)", flush=True)
+                            db.query(User).filter(User.id == user_id).update(
+                                {
+                                    User.total_attempts: (User.total_attempts + 1),
+                                    User.score: (User.score - 0.25),
+                                },
+                                synchronize_session=False,
+                            )
+
+                        # Commit the atomic update
                         db.commit()
+
+                        # Clamp negative score to 0.0 if it happened
+                        try:
+                            u_after = db.query(User).filter(User.id == user_id).first()
+                            if u_after and (u_after.score or 0.0) < 0.0:
+                                db.query(User).filter(User.id == user_id).update({User.score: 0.0}, synchronize_session=False)
+                                db.commit()
+
+                            # Log resulting values for verification
+                            if u_after:
+                                print(
+                                    f"ℹ️ Post-update user id={user_id} -> total_attempts={u_after.total_attempts}, correct_attempts={u_after.correct_attempts}, score={u_after.score}",
+                                    flush=True,
+                                )
+                            else:
+                                print(f"⚠️ User id={user_id} not found after update", flush=True)
+                        except Exception as requery_err:
+                            # Non-fatal: log and continue
+                            db.rollback()
+                            print(f"⚠️ Could not re-query/normalize user id={user_id} after commit: {requery_err}", flush=True)
+                    except Exception as commit_err:
+                        db.rollback()
+                        print(f"❗ Failed to apply atomic user update for id={user_id}: {commit_err}", flush=True)
                 else:
                     print("🕐 Not a final answer yet", flush=True)
 
