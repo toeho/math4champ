@@ -3,12 +3,12 @@ import { Image } from "lucide-react";
 import { sendToGemini } from "../utils/api";
 import { useLanguage } from "../hooks/useLanguage";
 import { useHistoryStore } from "../hooks/useHistory";
-import { useUser } from "../contexts/UserContext"; // ✅ import user context
+import { useUser } from "../contexts/UserContext";
 
 export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading, setLoading, loadMessages }) {
   const { lang } = useLanguage();
   const { addConversation } = useHistoryStore();
-  const { user } = useUser(); // ✅ get current logged-in user
+  const { user } = useUser();
 
   const [messages, setMessages] = useState(
     loadMessages || [
@@ -18,30 +18,36 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
 
+  // ⏱️ Timer state
+  const [timeTaken, setTimeTaken] = useState(0);
+  const timerRef = useRef(null);
+
+  // Scroll effect
   const messagesEndRef = useRef(null);
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
+  // ⏱️ Start timer as soon as chat loads
   useEffect(() => {
-    if (!loadMessages) {
-      // setMessages([{ text: lang === "hi" ? "नमस्ते! मैं आपके गणित के सवालों की मदद कर सकता हूँ।" : "Hello! I can help with your math questions.", sender: "bot" }]);
-      setMessages([
-      {
-        text:
-          lang === "hi"
-            ? "मैं आपकी मदद के लिए तैयार हूँ! आप ऐसे सवाल पूछ सकते हैं:\n• समीकरण हल करें\n• स्टेप्स समझाएँ\n• सवाल की फोटो अपलोड करें\n• कोई भी गणित का कॉन्सेप्ट समझें"
-            : "I'm ready to help! You can ask things like:\n• Solve equations\n• Show steps\n• Upload a picture of a problem\n• Explain any math concept",
-        sender: "bot"
-      }
-    ]);
-    } else {
-      setMessages(loadMessages);
-    }
-  }, [lang, loadMessages]);
+    startTimer();
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  const startTimer = () => {
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimeTaken((prev) => prev + 1);
+    }, 1000);
+  };
+
+  const resetTimer = () => {
+    clearInterval(timerRef.current);
+    setTimeTaken(0);
+    startTimer();
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setImage({ data: reader.result, mime: file.type });
@@ -58,8 +64,6 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
     }
 
     const userMessage = input.trim();
-
-    // show user message immediately
     const userEntries = [];
     if (userMessage) userEntries.push({ text: userMessage, sender: "user" });
     setMessages((prev) => [...prev, ...userEntries]);
@@ -68,9 +72,9 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
     try {
       setLoading(true);
 
-      // ✅ send username to backend
+      // ✅ include timeTaken in payload
       const response = await sendToGemini(
-        { text: userMessage || null, image: image || null },
+        { text: userMessage || null, image: image || null, time_taken: timeTaken },
         user.username
       );
 
@@ -80,6 +84,8 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
 
       setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
       addConversation([...messages, ...userEntries, { text: reply, sender: "bot" }]);
+
+      resetTimer(); // ⏱️ reset timer after successful send
     } catch (error) {
       console.error(error);
       setMessages((prev) => [
@@ -97,6 +103,9 @@ export default function ChatSection({ setIsChatExpanded, isChatExpanded, loading
   return (
     <div className="bg-white/10 rounded-xl p-4 mt-2 shadow text-white flex flex-col flex-1 min-h-0">
       <h2 className="text-base font-semibold mb-3">{lang === "hi" ? "गणित शिक्षक" : "Math Teacher"}</h2>
+
+      {/* Optional: Show live timer */}
+      <p className="text-xs text-white/70 mb-2">⏱️ {timeTaken}s since last message</p>
 
       <div className="flex-1 overflow-y-auto space-y-3 text-sm pr-1">
         {messages.map((msg, i) => (

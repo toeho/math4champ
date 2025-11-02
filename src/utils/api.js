@@ -25,7 +25,6 @@ let currentSessionId = localStorage.getItem("session_id") || null;
 // --- Send message to FastAPI backend using username ---
 export const sendToGemini = async (input, username) => {
   try {
-    // Load or create session ID
     if (!currentSessionId) {
       currentSessionId = crypto.randomUUID();
       localStorage.setItem("session_id", currentSessionId);
@@ -34,33 +33,25 @@ export const sendToGemini = async (input, username) => {
     const payload = {
       text: input.text || "",
       image: input.image?.data || null,
+      time_taken: input.time_taken || 0, // ⏱️ added here
       sender: "user",
-      session_id: currentSessionId, // ✅ attach session ID
+      session_id: currentSessionId,
     };
+console.log(payload)
+    if (!username) throw new Error("Username is required");
 
-    if (!username) throw new Error("Username is required to send messages");
-
-    // Call backend with username as path variable
     const response = await postRequest(`/chat/send/instant/${username}`, payload);
-    console.log(response)
-
-    const botMessage =
-      response.bot_message.text || "No reply.";
+    const botMessage = response.bot_message?.text || "No reply.";
 
     return {
-      candidates: [
-        {
-          content: {
-            parts: [{ text: botMessage }],
-          },
-        },
-      ],
+      candidates: [{ content: { parts: [{ text: botMessage }] } }],
     };
   } catch (error) {
     console.error("❌ Backend call failed:", error);
     throw error;
   }
 };
+
 
 export const resetSession = () => {
   currentSessionId = null;
