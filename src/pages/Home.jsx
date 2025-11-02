@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
@@ -10,10 +9,15 @@ import BottomNav from "../components/BottomNav";
 export default function Home() {
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [initialTopic, setInitialTopic] = useState(null);
 
-  // 👇 if user navigates from History, preload messages
   const location = useLocation();
   const preloadMessages = location.state?.messages || null;
+
+  const handleTopicClick = (topic) => {
+    setInitialTopic(topic);
+    setIsChatExpanded(true);
+  };
 
   return (
     <div
@@ -26,24 +30,19 @@ export default function Home() {
                    p-3 sm:p-4 md:p-5 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top header */}
         <Header />
-
-        {/* Progress bar */}
         <ProgressBar loading={loading} />
 
-        {/* Show features only if chat is not expanded */}
-        {!isChatExpanded && <FeatureGrid />}
+        {!isChatExpanded && <FeatureGrid onTopicClick={handleTopicClick} />}
 
-        {/* Chat Section with preloaded history support */}
         <ChatSection
           setIsChatExpanded={setIsChatExpanded}
           isChatExpanded={isChatExpanded}
           setLoading={setLoading}
-          loadMessages={preloadMessages} // 👈 added
+          loadMessages={preloadMessages}
+          initialTopic={initialTopic} // 👈 pass topic here
         />
 
-        {/* Bottom Navigation */}
         <BottomNav setIsChatExpanded={setIsChatExpanded} />
       </div>
     </div>

@@ -64,6 +64,5 @@ export const resetSession = () => {
   console.log("🔄 Chat session reset successfully");
 
   // ✅ Force navigation reset (not just reload)
-  window.history.replaceState({}, document.title, "/"); // clear React Router state
-  window.location.reload(); // trigger re-render of Home
+  // trigger re-render of Home
 };
