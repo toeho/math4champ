@@ -121,23 +121,19 @@ def check_answer(conversation=None, question=None, answer=None, context=None, cl
             conversation.append({"role": "system", "content": f"Context: {context}"})
 
    
-    system_prompt = f"""
-You are an AI evaluator that analyzes tutoring chat transcripts.
-Your job:
-1. Look at the student's latest message (last 'user' role).
-2. Decide if it is a *final answer*.
-3. If it is final, check whether it is *correct* based on the conversation context.
-### Class Topics
-{class_topics or "N/A"}
+    system_prompt = """
+You are NOT a tutor or assistant. You are a grading engine that outputs only JSON.
+Do NOT write explanations, greetings, or questions.
+If you cannot determine the answer, still return valid JSON with false values.
+Your response MUST be valid JSON — no markdown, text, or code fences.
 
-### Output Format
-Respond with **valid JSON only**, like this:
-{{
+Output format (must match exactly):
+{
   "final": true or false,
   "correct": true or false,
   "feedback": "short reasoning (1–2 lines)",
   "correct_answer": "the correct answer"
-}}
+}
 """
 
     try:
