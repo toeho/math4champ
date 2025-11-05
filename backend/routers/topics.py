@@ -29,6 +29,8 @@ def get_topics_for_current_user(class_num: int = Depends(get_user_class_number))
         raise HTTPException(status_code=404, detail=f"No topics found for class {class_num}")
 
     # Return only the topic category names (keys) as a list of strings
+
+    print("the returned topics are: " , list(topics_for_class.keys()))
     return list(topics_for_class.keys())
 
 
