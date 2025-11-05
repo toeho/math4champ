@@ -13,6 +13,7 @@ export default function Home() {
 
   const location = useLocation();
   const preloadMessages = location.state?.messages || null;
+  const preloadSessionId = location.state?.session_id || null;
 
   const handleTopicClick = (topic) => {
     setInitialTopic(topic);
@@ -40,6 +41,7 @@ export default function Home() {
           isChatExpanded={isChatExpanded}
           setLoading={setLoading}
           loadMessages={preloadMessages}
+          preloadSessionId={preloadSessionId}
           initialTopic={initialTopic} // 👈 pass topic here
         />
 

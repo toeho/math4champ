@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Image } from "lucide-react";
-import { sendToGemini } from "../utils/api";
+import { sendToGemini, setSessionId } from "../utils/api";
 import { useLanguage } from "../hooks/useLanguage";
 import { useHistoryStore } from "../hooks/useHistory";
 import { useUser } from "../contexts/UserContext";
@@ -11,6 +11,7 @@ export default function ChatSection({
   loading,
   setLoading,
   loadMessages,
+  preloadSessionId = null,
   initialTopic, // 👈 new prop
 }) {
   const { lang } = useLanguage();
@@ -40,6 +41,18 @@ export default function ChatSection({
     startTimer();
     return () => clearInterval(timerRef.current);
   }, []);
+
+  // If Home passes a preloadSessionId (from history click), set it so subsequent sends use it
+  useEffect(() => {
+    if (preloadSessionId) {
+      try {
+        setSessionId(preloadSessionId);
+        console.log("🔁 Restored session id:", preloadSessionId);
+      } catch (e) {
+        console.warn("Could not set preload session id", e);
+      }
+    }
+  }, [preloadSessionId]);
 
   const startTimer = () => {
     clearInterval(timerRef.current);

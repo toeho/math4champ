@@ -29,7 +29,7 @@ export default function History() {
 
   const handleClick = (chat) => {
     // 👇 navigate back to main chat page with chat history
-    navigate("/", { state: { messages: chat.messages || [] } });
+    navigate("/", { state: { messages: chat.messages || [], session_id: chat.session_id } });
   };
 
   if (loading) {

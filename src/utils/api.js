@@ -66,3 +66,16 @@ export const resetSession = () => {
   // ✅ Force navigation reset (not just reload)
   // trigger re-render of Home
 };
+
+// Allow other modules to explicitly set the current session id
+export const setSessionId = (id) => {
+  if (!id) return;
+  currentSessionId = id;
+  try {
+    localStorage.setItem("session_id", id);
+  } catch (e) {
+    // ignore storage errors
+  }
+};
+
+export const getSessionId = () => currentSessionId;
