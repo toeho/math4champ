@@ -186,7 +186,7 @@ def get_explore(
         raise HTTPException(status_code=401, detail="User not found")
 
     # -----------------------
-    # ✅ Build explore data
+    #  Build explore data
     # -----------------------
     total = int(user.total_attempts or 0)
     correct = int(user.correct_attempts or 0)
@@ -209,6 +209,8 @@ def get_explore(
 
     if progress_pct >= 80:
         badges.append("Math Ninja")
+    else:
+        badges.append("Maths learner")
 
     return ExploreData(
         progress=Progress(
