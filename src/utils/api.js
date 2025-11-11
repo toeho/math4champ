@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useUser } from "../contexts/UserContext";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const backendApi = axios.create({
   baseURL: BACKEND_URL,
