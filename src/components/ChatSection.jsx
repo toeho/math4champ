@@ -4,6 +4,7 @@ import { sendToGemini, setSessionId } from "../utils/api";
 import { useLanguage } from "../hooks/useLanguage";
 import { useHistoryStore } from "../hooks/useHistory";
 import { useUser } from "../contexts/UserContext";
+import SuccessAnimation from "./SuccessAnimation";
 
 export default function ChatSection({
   setIsChatExpanded,
@@ -17,6 +18,97 @@ export default function ChatSection({
   const { lang } = useLanguage();
   const { addConversation } = useHistoryStore();
   const { user } = useUser();
+
+  // Teacher expression logic based on message content
+  const getTeacherExpression = (text) => {
+    if (!text) return "neutral";
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes("correct") || lowerText.includes("great") || lowerText.includes("excellent") || lowerText.includes("perfect")) {
+      return "celebrating";
+    }
+    if (lowerText.includes("?") || lowerText.includes("let me") || lowerText.includes("thinking")) {
+      return "thinking";
+    }
+    if (lowerText.includes("good") || lowerText.includes("nice") || lowerText.includes("well done")) {
+      return "happy";
+    }
+    return "neutral";
+  };
+
+  // Check if message contains encouragement
+  const isEncouragementMessage = (text) => {
+    if (!text) return false;
+    const lowerText = text.toLowerCase();
+    return lowerText.includes("great") || lowerText.includes("excellent") || 
+           lowerText.includes("good job") || lowerText.includes("well done") ||
+           lowerText.includes("keep going") || lowerText.includes("you can do it") ||
+           lowerText.includes("nice work") || lowerText.includes("awesome");
+  };
+
+  // Teacher avatar component
+  const TeacherAvatar = ({ expression }) => {
+    const expressions = {
+      neutral: "🧑‍🏫",
+      thinking: "🤔",
+      happy: "😊",
+      celebrating: "🎉"
+    };
+    return (
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-xl border-2 border-white shadow-lg animate-bounce-in flex-shrink-0">
+        {expressions[expression] || expressions.neutral}
+      </div>
+    );
+  };
+
+  // Student avatar component
+  const StudentAvatar = () => {
+    return (
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-xl border-2 border-white shadow-lg flex-shrink-0">
+        👤
+      </div>
+    );
+  };
+
+  // Typing indicator component
+  const TypingIndicator = () => {
+    return (
+      <div className="flex gap-2 items-end animate-slide-in-left">
+        <TeacherAvatar expression="thinking" />
+        <div className="bg-white/20 backdrop-blur rounded-2xl rounded-bl-sm shadow-md px-4 py-3 flex gap-1">
+          <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce-dots"></div>
+          <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce-dots" style={{ animationDelay: '0.2s' }}></div>
+          <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce-dots" style={{ animationDelay: '0.4s' }}></div>
+        </div>
+      </div>
+    );
+  };
+
+  // Confetti component
+  const Confetti = () => {
+    const confettiColors = ['bg-yellow-400', 'bg-pink-400', 'bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-red-400'];
+    const confettiPieces = Array.from({ length: 30 }, (_, i) => ({
+      id: i,
+      color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+      left: Math.random() * 100,
+      delay: Math.random() * 0.5,
+    }));
+
+    return (
+      <div className="fixed inset-0 pointer-events-none z-50">
+        {confettiPieces.map((piece) => (
+          <div
+            key={piece.id}
+            className={`absolute w-2 h-2 ${piece.color} animate-confetti`}
+            style={{
+              left: `${piece.left}%`,
+              top: '-10px',
+              animationDelay: `${piece.delay}s`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  };
 
   const [messages, setMessages] = useState(
     loadMessages || [
@@ -32,6 +124,8 @@ export default function ChatSection({
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
   const [timeTaken, setTimeTaken] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const timerRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -117,6 +211,19 @@ export default function ChatSection({
       setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
       addConversation([...messages, newUserMsg, { text: reply, sender: "bot" }]);
 
+      // Trigger confetti and success animation for correct answers or celebrations
+      const lowerReply = reply.toLowerCase();
+      if (lowerReply.includes("correct") || lowerReply.includes("excellent") || 
+          lowerReply.includes("perfect") || lowerReply.includes("great job") ||
+          lowerReply.includes("well done")) {
+        setShowConfetti(true);
+        setShowSuccessAnimation(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+          setShowSuccessAnimation(false);
+        }, 3000);
+      }
+
       resetTimer();
     } catch (error) {
       console.error(error);
@@ -138,50 +245,87 @@ export default function ChatSection({
   };
 
   return (
-    <div className="bg-white/10 rounded-xl p-4 mt-2 shadow text-white flex flex-col flex-1 min-h-0">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 mt-2 shadow-xl text-white flex flex-col flex-1 min-h-[200px] max-h-[70vh] transition-all duration-300 ease-smooth">
       <h2 className="text-base font-semibold mb-3">
         {lang === "hi" ? "गणित शिक्षक" : "Math Teacher"}
       </h2>
 
       <p className="text-xs text-white/70 mb-2">⏱️ {timeTaken}s since last message</p>
 
-      <div className="flex-1 overflow-y-auto space-y-3 text-sm pr-1">
+      <div 
+        className="flex-1 overflow-y-auto space-y-3 text-sm pr-1 scroll-smooth" 
+        style={{ WebkitOverflowScrolling: 'touch' }}
+        role="log"
+        aria-live="polite"
+        aria-label="Chat messages"
+      >
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`w-fit max-w-[80%] ${
-              msg.sender === "user" ? "ml-auto text-right" : "text-left"
+            className={`flex gap-2 items-end ${
+              msg.sender === "user" 
+                ? "flex-row-reverse animate-slide-in-right" 
+                : "flex-row animate-slide-in-left"
             }`}
           >
-            {msg.image ? (
-              <img src={msg.image} alt="uploaded" className="max-w-[300px] rounded-lg" />
+            {/* Avatar */}
+            {msg.sender === "user" ? (
+              <StudentAvatar />
             ) : (
-              <div
-                className={`rounded-xl px-3 py-2 break-words ${
-                  msg.sender === "user" ? "bg-green-500 ml-auto" : "bg-white/20"
-                }`}
-              >
-                {msg.text}
-              </div>
+              <TeacherAvatar expression={getTeacherExpression(msg.text)} />
             )}
+            
+            {/* Message Content */}
+            <div className={`max-w-[80%] ${msg.sender === "user" ? "text-right" : "text-left"}`}>
+              {msg.image ? (
+                <img 
+                  src={msg.image} 
+                  alt="uploaded" 
+                  loading="lazy"
+                  decoding="async"
+                  className="max-w-[300px] rounded-lg shadow-lg" 
+                />
+              ) : (
+                <div className="relative">
+                  <div
+                    className={`px-4 py-2 break-words ${
+                      msg.sender === "user" 
+                        ? "bg-gradient-to-r from-green-400 to-green-600 rounded-2xl rounded-br-sm shadow-lg" 
+                        : "bg-white/20 backdrop-blur rounded-2xl rounded-bl-sm shadow-md"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                  {/* Animated emoji for encouragement messages */}
+                  {msg.sender === "bot" && isEncouragementMessage(msg.text) && (
+                    <div className="absolute -top-2 -right-2 text-2xl animate-emoji-bounce">
+                      {msg.text.toLowerCase().includes("excellent") || msg.text.toLowerCase().includes("perfect") ? "🌟" : "👍"}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         ))}
-        {loading && (
-          <div className="w-full bg-white/20 rounded-full h-2 mt-2">
-            <div className="bg-green-500 h-2 rounded-full animate-pulse w-2/3"></div>
-          </div>
-        )}
+        {loading && <TypingIndicator />}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex items-center mt-3 bg-white/20 rounded-xl px-3 py-2 shrink-0 space-x-2">
-        <label className="p-1 hover:bg-white/30 rounded-lg cursor-pointer">
-          <Image className="text-white" size={22} />
+      {/* Confetti effect */}
+      {showConfetti && <Confetti />}
+      
+      {/* Success animation */}
+      {showSuccessAnimation && <SuccessAnimation onComplete={() => setShowSuccessAnimation(false)} />}
+
+      <div className="flex items-center mt-3 bg-white/20 rounded-xl px-3 py-2 shrink-0 space-x-2 min-h-[48px] transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-400 focus-within:shadow-glow-blue">
+        <label className="p-2 hover:bg-white/30 rounded-lg cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <Image className="text-white" size={20} aria-hidden="true" />
           <input
             type="file"
             accept="image/*"
             className="hidden"
             onChange={handleImageUpload}
+            aria-label={lang === "hi" ? "छवि अपलोड करें" : "Upload image"}
           />
         </label>
         <input
@@ -194,13 +338,19 @@ export default function ChatSection({
           }
           className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/70"
           onFocus={() => setIsChatExpanded(true)}
+          aria-label={lang === "hi" ? "गणित का सवाल पूछें" : "Ask a math question"}
         />
         <button
           onClick={() => handleSend()}
           disabled={loading}
-          className="ml-2 bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-3 py-1 rounded-lg text-sm font-semibold"
+          className="ml-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg hover:shadow-glow-green flex items-center justify-center min-w-[44px] min-h-[44px]"
+          aria-label={loading ? (lang === "hi" ? "भेजा जा रहा है..." : "Sending...") : (lang === "hi" ? "संदेश भेजें" : "Send message")}
         >
-          &gt;
+          {loading ? (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
+          ) : (
+            <span aria-hidden="true">&gt;</span>
+          )}
         </button>
       </div>
     </div>

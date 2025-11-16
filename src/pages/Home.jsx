@@ -22,28 +22,37 @@ export default function Home() {
 
   return (
     <div
-      className="h-screen w-screen bg-gradient-to-b from-indigo-500 to-purple-600 p-2 sm:p-2 flex justify-center items-center"
+      className="h-screen w-screen bg-gradient-to-b from-indigo-500 to-purple-600 p-2 flex justify-center items-center relative overflow-hidden"
       onClick={() => setIsChatExpanded(false)}
     >
+      {/* Ambient floating elements */}
+      <div className="absolute top-10 left-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-ambient-float"></div>
+      <div className="absolute bottom-20 right-20 w-32 h-32 bg-purple-400/10 rounded-full blur-2xl animate-ambient-float animation-delay-1000"></div>
+      <div className="absolute top-1/3 right-10 w-16 h-16 bg-pink-400/10 rounded-full blur-xl animate-ambient-float animation-delay-500"></div>
+      
       <div
         className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-full 
                    bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl 
-                   p-3 sm:p-4 md:p-5 flex flex-col"
+                   p-4 flex flex-col relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
         <Header />
         <ProgressBar loading={loading} />
 
-        {!isChatExpanded && <FeatureGrid onTopicClick={handleTopicClick} />}
+        {/* Content area with proper overflow handling */}
+        <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
+          {!isChatExpanded && <FeatureGrid onTopicClick={handleTopicClick} />}
 
-        <ChatSection
-          setIsChatExpanded={setIsChatExpanded}
-          isChatExpanded={isChatExpanded}
-          setLoading={setLoading}
-          loadMessages={preloadMessages}
-          preloadSessionId={preloadSessionId}
-          initialTopic={initialTopic} // 👈 pass topic here
-        />
+          <ChatSection
+            setIsChatExpanded={setIsChatExpanded}
+            isChatExpanded={isChatExpanded}
+            setLoading={setLoading}
+            loading={loading}
+            loadMessages={preloadMessages}
+            preloadSessionId={preloadSessionId}
+            initialTopic={initialTopic}
+          />
+        </div>
 
         <BottomNav setIsChatExpanded={setIsChatExpanded} />
       </div>

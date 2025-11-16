@@ -5,6 +5,10 @@ import App from "./App.jsx";
 import { UserProvider } from "./contexts/UserContext";
 import { LanguageProvider } from "./contexts/LanguageProvider";
 import { HistoryProvider } from "./contexts/HistoryProvider";
+import { registerServiceWorker } from "./utils/serviceWorker";
+
+// Register service worker for offline support
+registerServiceWorker();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
