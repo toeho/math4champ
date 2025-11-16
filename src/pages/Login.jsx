@@ -65,7 +65,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-white px-4 py-8 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 animate-gradient-slow">
+    <div className="flex flex-col items-center justify-center min-h-screen text-white px-4 py-8 bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 animate-gradient-slow">
       {/* Animated welcome character/illustration */}
       <div className="mb-6 animate-bounce-in">
         <div className="text-6xl mb-2 animate-float">
@@ -102,7 +102,7 @@ export default function Login() {
             htmlFor="username"
             className={`absolute left-4 transition-all duration-200 pointer-events-none ${
               username || usernameFocused
-                ? "-top-2.5 text-xs bg-purple-600 px-2 rounded text-white"
+                ? "-top-2.5 text-xs bg-blue-600 px-2 rounded text-white"
                 : "top-3 text-white/50"
             }`}
           >
@@ -126,7 +126,7 @@ export default function Login() {
             htmlFor="password"
             className={`absolute left-4 transition-all duration-200 pointer-events-none ${
               password || passwordFocused
-                ? "-top-2.5 text-xs bg-purple-600 px-2 rounded text-white"
+                ? "-top-2.5 text-xs bg-blue-600 px-2 rounded text-white"
                 : "top-3 text-white/50"
             }`}
           >
@@ -184,7 +184,7 @@ export default function Login() {
       {/* Toggle button with smooth transition */}
       <button
         onClick={handleToggleMode}
-        className="mt-6 text-sm text-orange-300 hover:text-orange-200 hover:underline transition-all duration-200 animate-fade-in-delay-2"
+        className="mt-6 text-sm text-cyan-300 hover:text-cyan-200 hover:underline transition-all duration-200 animate-fade-in-delay-2"
       >
         {isSignup ? "Already have an account? Login" : "New user? Sign up"}
       </button>

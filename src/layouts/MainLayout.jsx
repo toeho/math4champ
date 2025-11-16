@@ -9,7 +9,7 @@ export default function MainLayout({ children }) {
 
   return (
     <div
-      className="h-screen w-screen bg-gradient-to-b from-indigo-500 to-purple-600 p-2 flex justify-center items-center"
+      className="h-screen w-screen bg-gradient-to-b from-blue-600 to-indigo-700 p-2 flex justify-center items-center"
       onClick={() => setIsChatExpanded(false)}
     >
       <div

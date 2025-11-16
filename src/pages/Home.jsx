@@ -22,13 +22,13 @@ export default function Home() {
 
   return (
     <div
-      className="h-screen w-screen bg-gradient-to-b from-indigo-500 to-purple-600 p-2 flex justify-center items-center relative overflow-hidden"
+      className="h-screen w-screen bg-gradient-to-b from-blue-600 to-indigo-700 p-2 flex justify-center items-center relative overflow-hidden"
       onClick={() => setIsChatExpanded(false)}
     >
       {/* Ambient floating elements */}
       <div className="absolute top-10 left-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-ambient-float"></div>
-      <div className="absolute bottom-20 right-20 w-32 h-32 bg-purple-400/10 rounded-full blur-2xl animate-ambient-float animation-delay-1000"></div>
-      <div className="absolute top-1/3 right-10 w-16 h-16 bg-pink-400/10 rounded-full blur-xl animate-ambient-float animation-delay-500"></div>
+      <div className="absolute bottom-20 right-20 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl animate-ambient-float animation-delay-1000"></div>
+      <div className="absolute top-1/3 right-10 w-16 h-16 bg-indigo-400/10 rounded-full blur-xl animate-ambient-float animation-delay-500"></div>
       
       <div
         className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-full 

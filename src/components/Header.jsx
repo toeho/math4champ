@@ -26,9 +26,9 @@ export default function Header() {
   };
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl px-4 py-3 shadow-lg animate-pulse-glow select-none">
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl px-4 py-3 shadow-lg animate-pulse-glow select-none">
       {/* Animated gradient background with subtle pulse effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 opacity-50 animate-shimmer bg-[length:200%_100%]"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 opacity-50 animate-shimmer bg-[length:200%_100%]"></div>
       
       <div className="relative flex justify-between items-center">
         {/* Logo with bounce animation on click */}
@@ -41,7 +41,7 @@ export default function Header() {
                 handleReset();
               }
             }}
-            className={`text-2xl lg:text-3xl font-bold text-white cursor-pointer hover:text-orange-300 transition-colors duration-200 ${
+            className={`text-2xl lg:text-3xl font-bold text-white cursor-pointer hover:text-cyan-300 transition-colors duration-200 ${
               isLogoAnimating ? "animate-bounce-in" : ""
             }`}
             style={{
@@ -71,7 +71,7 @@ export default function Header() {
           >
             {/* Slide indicator background */}
             <div
-              className={`absolute inset-y-0 w-1/2 bg-orange-400 rounded-full transition-transform duration-300 ease-out ${
+              className={`absolute inset-y-0 w-1/2 bg-cyan-400 rounded-full transition-transform duration-300 ease-out ${
                 lang === "hi" ? "translate-x-0" : "translate-x-full"
               }`}
               style={{ left: 0 }}

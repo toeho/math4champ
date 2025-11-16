@@ -97,14 +97,14 @@ export default function BottomNav({ setIsChatExpanded }) {
             
             {/* Active indicator - gradient underline */}
             {isActive && (
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-slide-in-bottom" />
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full animate-slide-in-bottom" />
             )}
             
             {/* Icon with gradient for active state */}
             <div className={`
               transition-all duration-200
               ${isActive 
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent' 
+                ? 'bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent' 
                 : 'text-white/70 hover:text-white'
               }
             `}>
@@ -115,7 +115,7 @@ export default function BottomNav({ setIsChatExpanded }) {
             <span className={`
               text-xs transition-all duration-200
               ${isActive 
-                ? 'opacity-100 font-semibold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent' 
+                ? 'opacity-100 font-semibold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent' 
                 : 'opacity-70 hover:opacity-100'
               }
             `}>
