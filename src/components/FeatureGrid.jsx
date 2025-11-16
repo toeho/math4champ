@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
-
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export default function FeatureGrid({ onTopicClick }) {
   const { lang } = useLanguage();
   const [topics, setTopics] = useState([]);
@@ -8,7 +8,7 @@ export default function FeatureGrid({ onTopicClick }) {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const res = await fetch("http://localhost:8000/topics/");
+        const res = await fetch(`${BACKEND_URL}/topics/`);
         if (!res.ok) throw new Error("Failed to fetch topics");
         const data = await res.json();
         setTopics(data);
