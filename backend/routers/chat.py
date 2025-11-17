@@ -396,6 +396,36 @@ def send_message_instant(
                             # Non-fatal: log and continue
                             db.rollback()
                             print(f"⚠️ Could not re-query/normalize user id={user_id} after commit: {requery_err}", flush=True)
+
+                        # Update streaks based on correctness: maintain current_streak and max_streak
+                        try:
+                            u_after = db.query(User).filter(User.id == user_id).first()
+                            if u_after:
+                                prev_streak = int(u_after.current_streak or 0)
+                                prev_max = int(u_after.max_streak or 0)
+                                # Compute new streak: if last update was a correct answer, increment, else reset to 0
+                                if is_correct:
+                                    new_streak = prev_streak + 1
+                                else:
+                                    new_streak = 0
+
+                                new_max = prev_max
+                                if new_streak > prev_max:
+                                    new_max = new_streak
+
+                                # Only write if changed
+                                if new_streak != prev_streak or new_max != prev_max:
+                                    db.query(User).filter(User.id == user_id).update(
+                                        {
+                                            User.current_streak: new_streak,
+                                            User.max_streak: new_max,
+                                        },
+                                        synchronize_session=False,
+                                    )
+                                    db.commit()
+                        except Exception as streak_err:
+                            db.rollback()
+                            print(f"⚠️ Could not update streaks for user id={user_id}: {streak_err}", flush=True)
                     except Exception as commit_err:
                         db.rollback()
                         print(f"❗ Failed to apply atomic user update for id={user_id}: {commit_err}", flush=True)

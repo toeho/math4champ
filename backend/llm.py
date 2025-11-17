@@ -6,7 +6,7 @@ from litellm import completion
 
 load_dotenv()
 
-MODEL_NAME = "gemini/gemini-2.5-flash"  # format for LiteLLM Gemini
+MODEL_NAME = "gemini/gemini-2.0-flash"  # format for LiteLLM Gemini
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 

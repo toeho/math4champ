@@ -3,6 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from database import Base, engine
+from sqlalchemy import text
 
 # Ensure the backend directory is on sys.path so imports like `from routers import ...`
 # work whether uvicorn is started from the repo root (uvicorn backend.main:app)
@@ -14,6 +15,33 @@ if str(BASE_DIR) not in sys.path:
 from routers import user, chat, history, explore, syllabus, topics
 from fastapi.middleware.cors import CORSMiddleware
 # create tables
+def ensure_streak_columns():
+    """Add `current_streak` and `max_streak` columns to `users` table if missing (SQLite).
+
+    This is a lightweight dev-time migration to avoid manual DB edits.
+    """
+    try:
+        conn = engine.connect()
+        try:
+            res = conn.execute(text("PRAGMA table_info('users')")).mappings().all()
+            cols = [r["name"] for r in res]
+            stmts = []
+            if "current_streak" not in cols:
+                stmts.append("ALTER TABLE users ADD COLUMN current_streak INTEGER DEFAULT 0")
+            if "max_streak" not in cols:
+                stmts.append("ALTER TABLE users ADD COLUMN max_streak INTEGER DEFAULT 0")
+            for s in stmts:
+                conn.execute(text(s))
+            if stmts:
+                print(f"DB migration applied: added columns -> {stmts}", flush=True)
+        finally:
+            conn.close()
+    except Exception as e:
+        print(f"DB migration error (non-fatal): {e}", flush=True)
+
+
+# Ensure schema exists and run lightweight migrations
+ensure_streak_columns()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()

@@ -222,7 +222,7 @@ def get_explore(
         practice=Practice(
             problems=total,
             minutes=int(practice_minutes),
-            streak=0
+            streak=int(user.max_streak or 0)
         ),
         strengths=Strengths(
             strongest=strongest,

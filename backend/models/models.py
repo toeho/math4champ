@@ -23,6 +23,9 @@ class User(Base):
     correct_attempts = Column(Integer, default=0)
     score = Column(Float, default=0.0)
     total_time_taken = Column(Float, default=0.0)
+    # Streak tracking
+    current_streak = Column(Integer, default=0)
+    max_streak = Column(Integer, default=0)
 
 # ---------- Chat ----------
 class Chat(Base):
