@@ -1,0 +1,284 @@
+{
+  "Mathematics_Syllabus": {
+    "Class_6": {
+      "Number_System": {
+        "description": "Introduction to numbers, place values, integers, basic operations, and fractions.",
+        "difficulty": "Basic",
+        "subtopics": {
+          "Knowing_Numbers": {
+            "skills": [
+              "Reading large numbers",
+              "Place value and face value",
+              "Comparing numbers",
+              "Estimation and rounding"
+            ],
+            "question_examples": [
+              "Write the place value of 7 in 57,384.",
+              "Round 5782 to the nearest hundred.",
+              "Arrange 3456, 3546, 3465 in ascending order."
+            ]
+          },
+          "Whole_Numbers": {
+            "skills": [
+              "Basic operations",
+              "Properties of addition and multiplication"
+            ],
+            "question_examples": [
+              "Use distributive property to evaluate 23 × 105.",
+              "Identify identity and zero elements."
+            ]
+          },
+          "Integers": {
+            "skills": [
+              "Understanding positive/negative numbers",
+              "Representation on number line"
+            ],
+            "question_examples": [
+              "Represent –5 on a number line.",
+              "Find: (–3) + 7."
+            ]
+          },
+          "Fractions_and_Decimals": {
+            "skills": [
+              "Equivalent fractions",
+              "Converting fraction ↔ decimal",
+              "Comparing decimals"
+            ],
+            "question_examples": [
+              "Convert 3/8 to decimal.",
+              "Arrange: 0.6, 0.56, 0.605."
+            ]
+          }
+        }
+      },
+
+      "Algebra": {
+        "description": "Basic introduction to algebraic language and simple expressions.",
+        "difficulty": "Basic",
+        "subtopics": {
+          "Introduction_to_Algebra": {
+            "skills": [
+              "Variables and constants",
+              "Simple algebraic expressions"
+            ],
+            "question_examples": [
+              "Form an expression for: 3 more than a number x.",
+              "Identify variable in the expression 5y + 6."
+            ]
+          }
+        }
+      },
+
+      "Geometry": {
+        "description": "Basic understanding of shapes, symmetry, and spatial reasoning.",
+        "difficulty": "Basic",
+        "subtopics": {
+          "Basic_Geometrical_Ideas": {
+            "skills": [
+              "Points, lines, line segments, rays",
+              "Curves and polygons"
+            ],
+            "question_examples": [
+              "Define a line segment.",
+              "Identify vertices of a triangle."
+            ]
+          },
+          "Symmetry": {
+            "skills": [
+              "Line of symmetry",
+              "Mirror images"
+            ],
+            "question_examples": [
+              "Draw the line of symmetry for a given figure."
+            ]
+          }
+        }
+      }
+    },
+
+    "Class_7": {
+      "Number_System": {
+        "description": "Deeper understanding of rational numbers, fractions, and integers.",
+        "difficulty": "Basic to Moderate",
+        "subtopics": {
+          "Rational_Numbers": {
+            "skills": [
+              "Equivalent rational numbers",
+              "Representation on number line",
+              "Operations on rational numbers"
+            ],
+            "question_examples": [
+              "Write 4/6 in lowest form.",
+              "Add: 2/3 + (–5/6)."
+            ]
+          }
+        }
+      },
+
+      "Algebra": {
+        "description": "Expressions, linear equations, and simplification.",
+        "difficulty": "Basic to Moderate",
+        "subtopics": {
+          "Simple_Equations": {
+            "skills": [
+              "Solving one-variable equations",
+              "Transposing terms",
+              "Modeling verbal problems"
+            ],
+            "question_examples": [
+              "Solve: 3x − 5 = 10.",
+              "Form an equation: A number decreased by 7 is 15."
+            ]
+          }
+        }
+      }
+    },
+
+    "Class_8": {
+      "Number_System": {
+        "difficulty": "Moderate",
+        "description": "Advanced rational numbers, exponents, square/cube roots.",
+        "subtopics": {
+          "Exponents_and_Powers": {
+            "skills": [
+              "Laws of exponents",
+              "Scientific notation"
+            ],
+            "question_examples": [
+              "Simplify: (2⁵ × 2⁴) ÷ 2³.",
+              "Write 0.00045 in standard form."
+            ]
+          }
+        }
+      }
+    },
+
+    "Class_9": {
+      "Algebra": {
+        "difficulty": "Moderate",
+        "description": "Polynomials, linear equations in two variables.",
+        "subtopics": {
+          "Polynomials": {
+            "skills": [
+              "Types of polynomials",
+              "Zeroes of polynomial",
+              "Algebraic identities"
+            ],
+            "question_examples": [
+              "Find the zero of p(x)=2x+5.",
+              "Expand: (a + b)²."
+            ]
+          }
+        }
+      }
+    },
+
+    "Class_10": {
+      "Trigonometry": {
+        "difficulty": "Moderate to Advanced",
+        "description": "Introduction to trigonometric ratios and applications.",
+        "subtopics": {
+          "Trigonometric_Ratios": {
+            "skills": [
+              "Ratios in right triangle",
+              "Values of standard angles"
+            ],
+            "question_examples": [
+              "Find sin(30°).",
+              "Evaluate: tan(45°) + cos(60°)."
+            ]
+          },
+          "Applications_of_Trigonometry": {
+            "skills": [
+              "Heights and distances"
+            ],
+            "question_examples": [
+              "A tower casts a 10 m shadow at 60° elevation. Find height."
+            ]
+          }
+        }
+      }
+    },
+
+    "Class_11": {
+      "Calculus": {
+        "difficulty": "Advanced",
+        "description": "Introduction to limits and derivatives.",
+        "subtopics": {
+          "Limits": {
+            "skills": [
+              "Evaluating limits",
+              "Left-hand/right-hand limits"
+            ],
+            "question_examples": [
+              "Find limit x→2 of (x²−4)/(x−2).",
+              "Evaluate: lim(x→0) sinx/x."
+            ]
+          }
+        }
+      },
+
+      "Algebra": {
+        "difficulty": "Advanced",
+        "subtopics": {
+          "Complex_Numbers": {
+            "skills": [
+              "Imaginary numbers",
+              "Argand plane"
+            ],
+            "question_examples": [
+              "Simplify: √−49.",
+              "Plot 3 + 4i on Argand plane."
+            ]
+          }
+        }
+      }
+    },
+
+    "Class_12": {
+      "Calculus": {
+        "difficulty": "Advanced",
+        "description": "Derivatives, integrals & differential equations.",
+        "subtopics": {
+          "Application_of_Derivatives": {
+            "skills": [
+              "Rate of change",
+              "Maxima and minima"
+            ],
+            "question_examples": [
+              "Find the maximum value of f(x)=3x−x².",
+              "Rate of change of area of circle w.r.t radius."
+            ]
+          },
+          "Integrals": {
+            "skills": [
+              "Indefinite integrals",
+              "Definite integrals",
+              "Area under curves"
+            ],
+            "question_examples": [
+              "∫ (2x + 3) dx",
+              "Find area under curve y = x² from 0 to 2."
+            ]
+          }
+        }
+      },
+
+      "Probability": {
+        "difficulty": "Advanced",
+        "subtopics": {
+          "Conditional_Probability": {
+            "skills": [
+              "Bayes theorem",
+              "Independent/dependent events"
+            ],
+            "question_examples": [
+              "Find P(A|B) if P(A∩B)=0.1 and P(B)=0.5.",
+              "Solve a Bayes’ theorem problem."
+            ]
+          }
+        }
+      }
+    }
+  }
+}

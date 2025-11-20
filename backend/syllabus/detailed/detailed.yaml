@@ -1,0 +1,298 @@
+Mathematics_Syllabus:
+  Class_6:
+    Number_System:
+      description: "Introduction to whole numbers, integers, fractions, decimals, and foundational numerical skills."
+      difficulty: "Basic"
+      topics:
+        Knowing_Numbers:
+          skills:
+            - understanding place value, face value
+            - comparing and ordering numbers
+            - estimation and rounding
+            - reading and writing large numbers up to 8 digits
+          question_types:
+            conceptual:
+              - "Explain the difference between place value and face value."
+              - "What is the largest 4-digit number formed using digits 5, 3, 7, 1?"
+            procedural:
+              - "Round 48,672 to the nearest thousand."
+              - "Write the expanded form of 7,03,240."
+            word_problems:
+              - "A village has 36,450 people. Another has 18,230 more. Find the population difference."
+        Whole_Numbers:
+          skills:
+            - properties of operations (commutative, associative, identity)
+            - basic arithmetic operations
+            - number patterns
+          question_types:
+            conceptual:
+              - "State the commutative property of addition with an example."
+            procedural:
+              - "Use distributive property to compute 27 × 102."
+            HOTS:
+              - "If a × b = b × a, illustrate with three different pairs of numbers."
+        Integers:
+          skills:
+            - representation on number line
+            - ordering integers
+            - addition and subtraction of integers
+          question_types:
+            conceptual:
+              - "What is an integer? Give examples."
+            procedural:
+              - "Evaluate: (-12) + 7."
+              - "Represent -8 on a number line."
+        Fractions_and_Decimals:
+          skills:
+            - equivalent fractions
+            - converting between fractions and decimals
+            - comparing decimals
+            - addition and subtraction
+          question_types:
+            procedural:
+              - "Convert 3/4 to decimal."
+              - "Arrange in ascending order: 0.6, 0.56, 0.605."
+            word_problems:
+              - "A rope is 4.5 m long. If 2.25 m is cut, how much remains?"
+
+    Algebra:
+      description: "Introduction to algebraic language and simple expressions."
+      difficulty: "Basic"
+      topics:
+        Introduction_to_Algebra:
+          skills:
+            - variables, constants, coefficients
+            - forming algebraic expressions
+          question_types:
+            conceptual:
+              - "What is a variable?"
+            procedural:
+              - "Form an expression for: 7 more than a number x."
+            word_problems:
+              - "Write an expression for the perimeter of a rectangle with length l and breadth b."
+
+    Geometry:
+      description: "Basic shapes, lines, angles, and symmetry."
+      difficulty: "Basic"
+      topics:
+        Basic_Geometrical_Ideas:
+          skills:
+            - points, lines, segments, rays
+            - polygons and curves
+          question_types:
+            conceptual:
+              - "Define a ray with a diagram."
+        Symmetry:
+          skills:
+            - symmetrical figures
+            - lines of symmetry
+          question_types:
+            procedural:
+              - "Draw all lines of symmetry for a square."
+
+
+  Class_7:
+    Number_System:
+      difficulty: "Basic–Moderate"
+      description: "Operations and deeper properties of rational numbers."
+      topics:
+        Rational_Numbers:
+          skills:
+            - equivalent rational numbers
+            - number line placement
+            - addition/subtraction/multiplication/division
+          question_types:
+            procedural:
+              - "Add: 2/3 + (-5/6)."
+              - "Multiply: (-4/9) × (27/8)."
+            conceptual:
+              - "Why are integers also rational numbers?"
+            HOTS:
+              - "Find three rational numbers between 1/4 and 1/3."
+
+    Algebra:
+      topics:
+        Algebraic_Expressions:
+          skills:
+            - identifying terms, coefficients
+            - simplifying expressions
+          question_types:
+            procedural:
+              - "Simplify: 3x + 7 – 2x + 5."
+        Simple_Equations:
+          skills:
+            - solving linear equations
+            - forming equations from text
+          question_types:
+            procedural:
+              - "Solve: 4x – 9 = 11."
+            word_problems:
+              - "A number reduced by 6 gives 15. Find the number."
+
+    Geometry:
+      topics:
+        Triangles_and_Properties:
+          skills:
+            - inequality theorem
+            - types of triangles
+            - angle sum property
+          question_types:
+            procedural:
+              - "Find the third angle of a triangle with angles 50° and 60°."
+        Congruence:
+          skills:
+            - SSS, SAS, ASA criteria
+          question_types:
+            conceptual:
+              - "Explain the SSS rule with an example."
+
+  Class_8:
+    Number_System:
+      difficulty: "Moderate"
+      topics:
+        Exponents_and_Powers:
+          skills:
+            - exponent laws
+            - scientific notation
+          question_types:
+            procedural:
+              - "Simplify: (2⁵ × 2⁴) ÷ 2³."
+            HOTS:
+              - "Compare 3⁵ and 5³ without full expansion."
+
+    Algebra:
+      topics:
+        Factorisation:
+          skills:
+            - common factor method
+            - algebraic identities
+          question_types:
+            procedural:
+              - "Factorise: x² + 7x."
+              - "Use identity (a+b)² to expand (3x + 2)²."
+
+    Geometry:
+      topics:
+        Quadrilaterals:
+          skills:
+            - types and properties
+            - angle relationships
+          question_types:
+            procedural:
+              - "Find missing angles in a parallelogram."
+
+  Class_9:
+    Number_System:
+      difficulty: "Moderate"
+      topics:
+        Real_Numbers:
+          skills:
+            - irrational numbers
+            - real number representation
+          question_types:
+            HOTS:
+              - "Prove √3 is irrational."
+
+    Algebra:
+      topics:
+        Polynomials:
+          skills:
+            - factor theorem
+            - zeroes of polynomials
+          question_types:
+            procedural:
+              - "Find the zero of p(x) = 2x + 5."
+
+    Geometry:
+      topics:
+        Circles:
+          skills:
+            - chords, tangents
+            - perpendicularity
+          question_types:
+            conceptual:
+              - "State theorem: Perpendicular from centre to chord."
+
+  Class_10:
+    Algebra:
+      topics:
+        Quadratic_Equations:
+          skills:
+            - factorisation method
+            - quadratic formula
+          question_types:
+            procedural:
+              - "Solve: x² – 7x + 10 = 0."
+
+    Trigonometry:
+      difficulty: "Moderate–Advanced"
+      topics:
+        Trigonometric_Ratios:
+          skills:
+            - sine, cosine, tangent
+            - standard angle values
+          question_types:
+            procedural:
+              - "Find cos(60°)."
+        Applications:
+          skills:
+            - heights and distances
+          question_types:
+            word_problems:
+              - "A tower casts a shadow 10 m long at 60° elevation. Find height."
+
+  Class_11:
+    Algebra:
+      difficulty: "Advanced"
+      topics:
+        Complex_Numbers:
+          skills:
+            - imaginary numbers
+            - Argand plane
+          question_types:
+            procedural:
+              - "Simplify √(-64)."
+        Permutation_Combination:
+          skills:
+            - nPr, nCr
+          question_types:
+            procedural:
+              - "Find 5P2."
+
+    Calculus:
+      topics:
+        Limits:
+          skills:
+            - evaluating standard limits
+          question_types:
+            procedural:
+              - "Evaluate lim(x→0) sinx/x."
+
+  Class_12:
+    Calculus:
+      difficulty: "Advanced"
+      topics:
+        Derivatives:
+          skills:
+            - rate of change
+            - maxima/minima
+          question_types:
+            procedural:
+              - "Find dy/dx for x³ + 3x."
+        Integrals:
+          skills:
+            - definite & indefinite integrals
+            - area under curves
+          question_types:
+            procedural:
+              - "Evaluate ∫ (2x + 3) dx."
+
+    Probability:
+      topics:
+        Conditional_Probability:
+          skills:
+            - Bayes theorem
+            - dependent vs independent events
+          question_types:
+            HOTS:
+              - "If P(A∩B)=0.1 and P(B)=0.5, find P(A|B)."

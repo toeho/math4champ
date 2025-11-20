@@ -1,0 +1,228 @@
+{
+  "Mathematics_Syllabus": {
+    "Class_6": {
+      "Number_System": [
+        "Knowing Numbers",
+        "Whole Numbers",
+        "Integers",
+        "Fractions",
+        "Decimals"
+      ],
+      "Algebra": [
+        "Introduction to Algebra",
+        "Basic Algebraic Expressions"
+      ],
+      "Geometry": [
+        "Basic Geometrical Ideas",
+        "Understanding Elementary Shapes",
+        "Symmetry"
+      ],
+      "Mensuration": [
+        "Perimeter",
+        "Area"
+      ],
+      "Data_Handling": [
+        "Pictographs",
+        "Bar Graphs"
+      ],
+      "Ratio_Proportion": [
+        "Ratio",
+        "Proportion",
+        "Unitary Method"
+      ]
+    },
+
+    "Class_7": {
+      "Number_System": [
+        "Integers",
+        "Fractions and Decimals",
+        "Rational Numbers"
+      ],
+      "Algebra": [
+        "Algebraic Expressions",
+        "Simple Equations"
+      ],
+      "Geometry": [
+        "Lines and Angles",
+        "Triangles and Properties",
+        "Congruence of Triangles",
+        "Symmetry"
+      ],
+      "Mensuration": [
+        "Perimeter and Area",
+        "Algebraic Mensuration"
+      ],
+      "Data_Handling": [
+        "Data Collection",
+        "Bar Graphs",
+        "Probability (Basic Idea)"
+      ],
+      "Ratio_Proportion": [
+        "Ratio",
+        "Proportion",
+        "Percentage",
+        "Profit and Loss",
+        "Simple Interest"
+      ]
+    },
+
+    "Class_8": {
+      "Number_System": [
+        "Rational Numbers",
+        "Exponents and Powers",
+        "Squares and Square Roots",
+        "Cubes and Cube Roots"
+      ],
+      "Algebra": [
+        "Linear Equations",
+        "Factorisation",
+        "Algebraic Identities"
+      ],
+      "Geometry": [
+        "Understanding Quadrilaterals",
+        "Polygons",
+        "Practical Geometry"
+      ],
+      "Mensuration": [
+        "Area of Parallelogram and Triangle",
+        "Surface Area and Volume"
+      ],
+      "Data_Handling": [
+        "Frequency Tables",
+        "Bar Graphs",
+        "Pie Charts"
+      ],
+      "Direct_and_Inverse": [
+        "Direct Variation",
+        "Inverse Variation"
+      ]
+    },
+
+    "Class_9": {
+      "Number_System": [
+        "Real Numbers"
+      ],
+      "Algebra": [
+        "Polynomials",
+        "Linear Equations in Two Variables"
+      ],
+      "Coordinate_Geometry": [
+        "Cartesian Plane",
+        "Plotting Points"
+      ],
+      "Geometry": [
+        "Lines and Angles",
+        "Triangles",
+        "Quadrilaterals",
+        "Circles",
+        "Constructions"
+      ],
+      "Mensuration": [
+        "Areas of Parallelograms and Triangles",
+        "Surface Area and Volume"
+      ],
+      "Statistics_Probability": [
+        "Statistics (Collection & Representation)",
+        "Probability (Basic)"
+      ]
+    },
+
+    "Class_10": {
+      "Number_System": [
+        "Real Numbers (Irrational Numbers, Revisiting Euclid’s Division Lemma)"
+      ],
+      "Algebra": [
+        "Polynomials",
+        "Pair of Linear Equations",
+        "Quadratic Equations",
+        "Arithmetic Progressions"
+      ],
+      "Coordinate_Geometry": [
+        "Distance Formula",
+        "Section Formula",
+        "Area of Triangle"
+      ],
+      "Geometry": [
+        "Triangles (Similarity)",
+        "Circles",
+        "Constructions"
+      ],
+      "Mensuration": [
+        "Surface Area and Volume"
+      ],
+      "Trigonometry": [
+        "Introduction to Trigonometry",
+        "Trigonometric Ratios",
+        "Applications of Trigonometry"
+      ],
+      "Statistics_Probability": [
+        "Mean, Median, Mode",
+        "Probability"
+      ]
+    },
+
+    "Class_11": {
+      "Sets_and_Logic": [
+        "Sets",
+        "Relations",
+        "Functions",
+        "Mathematical Reasoning"
+      ],
+      "Algebra": [
+        "Complex Numbers",
+        "Quadratic Equations",
+        "Sequences and Series",
+        "Binomial Theorem",
+        "Permutations and Combinations"
+      ],
+      "Coordinate_Geometry": [
+        "Straight Lines",
+        "Conic Sections",
+        "3D Geometry (Basics)"
+      ],
+      "Trigonometry": [
+        "Trigonometric Functions",
+        "Inverse Trigonometric Functions"
+      ],
+      "Calculus": [
+        "Limits",
+        "Derivatives"
+      ],
+      "Statistics_Probability": [
+        "Statistics",
+        "Probability"
+      ]
+    },
+
+    "Class_12": {
+      "Algebra": [
+        "Matrices",
+        "Determinants"
+      ],
+      "Calculus": [
+        "Continuity",
+        "Differentiability",
+        "Applications of Derivatives",
+        "Integrals",
+        "Differential Equations",
+        "Applications of Integrals"
+      ],
+      "Vector_and_3D": [
+        "Vectors",
+        "Three Dimensional Geometry"
+      ],
+      "Probability": [
+        "Conditional Probability",
+        "Random Variables & Distribution (Basic)"
+      ],
+      "Linear_Programming": [
+        "LPP Basics and Graphical Method"
+      ],
+      "Relations_and_Functions": [
+        "Functions",
+        "Binary Operations",
+        "Inverse Trigonometric Functions (Advanced)"
+      ]
+    }
+  }
+}
