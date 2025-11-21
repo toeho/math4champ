@@ -1,54 +1,43 @@
 version: "3.9"
 services:
   frontend:
+    # Builds the frontend application from the current directory's Dockerfile
     build:
       context: .
       dockerfile: Dockerfile
     container_name: frontend-container
+    # Maps container port 80 (web server) to host port 3000
     ports:
       - "3000:80"
     restart: unless-stopped
+    # Waits for the backend service to be healthy before starting
     depends_on:
       backend:
         condition: service_healthy
-    
+
   backend:
+    # Builds the backend application from the './backend' subdirectory's Dockerfile
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: backend-container
+    # Maps container port 8000 to host port 8000
     ports:
       - "8000:8000"
     restart: unless-stopped
     environment:
-      DATABASE_URL: "postgresql://user:pass@db:5432/mydb"
-    depends_on:
-      db:
-        condition: service_healthy
+      # NOTE: Postgres dependency has been removed. 
+      # Update this URL to point to your new database (e.g., a local SQLite file path, or an external service).
+      DATABASE_URL: "sqlite:///./local.db" 
+    # Removed dependency on 'db' service
+    
+    # Health check remains, assuming the backend application still has a health endpoint
     healthcheck:
       test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/docs\")' || exit 1"]
       interval: 10s
       retries: 5 
       start_period: 5s
       timeout: 5s
-
-  db:
-    image: postgres:15-alpine 
-    container_name: database
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: mydb
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydb -h localhost"]
-      interval: 5s
-      retries: 5
-      start_period: 5s
-      timeout: 5s
-volumes:
-  pgdata:
+      
+# Removed 'db' service entirely
+# Removed 'volumes' block as 'pgdata' is no longer needed
