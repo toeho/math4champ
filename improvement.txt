@@ -77,19 +77,14 @@ PRIORITY 4: ACCESSIBILITY & LOCALIZATION
 PRIORITY 5: TEACHER & PARENT TOOLS
 ===========================================
 
-10. TEACHER DASHBOARD
-    - Teachers can monitor multiple students
-    - Assign specific topics/problems
-    - View class-wide analytics
-    - Send encouragement messages
 
-11. PARENT NOTIFICATION SYSTEM
+10. PARENT NOTIFICATION SYSTEM
     - WhatsApp integration for progress updates
     - Daily/weekly reports via WhatsApp
     - Alerts for milestones achieved
     - Suggestions for how parents can help
 
-12. HOMEWORK ASSIGNMENT FEATURE
+11. HOMEWORK ASSIGNMENT FEATURE
     - Teachers assign specific problems
     - Students complete and submit
     - Auto-grading with detailed feedback
@@ -99,7 +94,7 @@ PRIORITY 5: TEACHER & PARENT TOOLS
 PRIORITY 6: DIAGNOSTIC & REMEDIAL
 ===========================================
 
-13. DIAGNOSTIC TEST
+12. DIAGNOSTIC TEST
     - Initial assessment to identify knowledge gaps
     - Periodic re-assessment to track improvement
     - Generates personalized learning path
@@ -109,19 +104,13 @@ PRIORITY 6: DIAGNOSTIC & REMEDIAL
 PRIORITY 7: SOCIAL & COMMUNITY FEATURES
 ===========================================
 
-14. VILLAGE LEARNING CENTERS
-    - Identify students from same village
-    - Facilitate group study sessions
-    - Share resources and success stories
-    - Community leaderboards
-
-15. SUCCESS STORIES
+13. SUCCESS STORIES
     - Showcase students who improved significantly
     - Motivational content
     - Tips from successful students
     - Builds aspiration and hope
 
-16. ASK A TEACHER (ASYNC)
+14. ASK A TEACHER (ASYNC)
     - Students can post questions
     - Volunteer teachers answer within 24 hours
     - Community-driven support
