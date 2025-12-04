@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Image } from "lucide-react";
-import { sendToGemini, setSessionId } from "../utils/api";
+import { sendToGemini, setSessionId ,sendCheckRequest} from "../utils/api";
 import { useLanguage } from "../hooks/useLanguage";
 import { useHistoryStore } from "../hooks/useHistory";
 import { useUser } from "../contexts/UserContext";
@@ -184,6 +184,39 @@ export default function ChatSection({
     };
     reader.readAsDataURL(file);
   };
+  const handleCheck = async () => {
+  const userMessage = input.trim();
+  if (!userMessage || loading) return;
+
+  const newUserMsg = { text: userMessage, sender: "user" };
+  setMessages((prev) => [...prev, newUserMsg]);
+  setInput("");
+
+  try {
+    setLoading(true);
+    const response = await sendCheckRequest(
+      { text: userMessage, image: image || null, time_taken: timeTaken },
+      user.username
+    );
+
+    const reply = response.bot_message || "No response received.";
+
+    setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
+    addConversation([...messages, newUserMsg, { text: reply, sender: "bot" }]);
+
+    resetTimer();
+  } catch (error) {
+    console.error(error);
+    setMessages((prev) => [
+      ...prev,
+      { text: "An error occurred while checking.", sender: "bot" },
+    ]);
+  } finally {
+    setLoading(false);
+    setImage(null);
+  }
+};
+
 
   const handleSend = async (forcedMessage = null) => {
     const userMessage = forcedMessage || input.trim();
@@ -341,17 +374,26 @@ export default function ChatSection({
           aria-label={lang === "hi" ? "गणित का सवाल पूछें" : "Ask a math question"}
         />
         <button
-          onClick={() => handleSend()}
-          disabled={loading}
-          className="ml-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg hover:shadow-glow-green flex items-center justify-center min-w-[44px] min-h-[44px]"
-          aria-label={loading ? (lang === "hi" ? "भेजा जा रहा है..." : "Sending...") : (lang === "hi" ? "संदेश भेजें" : "Send message")}
-        >
-          {loading ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
-          ) : (
-            <span aria-hidden="true">&gt;</span>
-          )}
-        </button>
+  onClick={() => handleSend()}
+  disabled={loading}
+  className="ml-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg hover:shadow-glow-green flex items-center justify-center min-w-[44px] min-h-[44px]"
+>
+  {loading ? (
+    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+  ) : (
+    <span>&gt;</span>
+  )}
+</button>
+
+{/* NEW CHECK BUTTON */}
+<button
+  onClick={() => handleCheck()}
+  disabled={loading}
+  className="ml-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg hover:shadow-glow-blue flex items-center justify-center min-w-[44px] min-h-[44px]"
+>
+  ✔
+</button>
+
       </div>
     </div>
   );

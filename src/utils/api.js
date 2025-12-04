@@ -79,3 +79,25 @@ export const setSessionId = (id) => {
 };
 
 export const getSessionId = () => currentSessionId;
+export const sendCheckRequest = async (input, username) => {
+  try {
+    if (!currentSessionId) {
+      currentSessionId = crypto.randomUUID();
+      localStorage.setItem("session_id", currentSessionId);
+    }
+
+    const payload = {
+      text: input.text || "",
+      image: input.image?.data || null,
+      time_taken: input.time_taken || 0,
+      sender: "user",
+      session_id: currentSessionId,
+    };
+
+    const response = await postRequest(`/checkit/${username}`, payload);
+    return response; // expect { bot_message: "...text..." }
+  } catch (error) {
+    console.error("❌ Check Request failed:", error);
+    throw error;
+  }
+};
