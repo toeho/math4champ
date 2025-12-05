@@ -26,6 +26,8 @@ class User(Base):
     # Streak tracking
     current_streak = Column(Integer, default=0)
     max_streak = Column(Integer, default=0)
+    # Parent feedback column: stores latest parent feedback for this student
+    Parent_feedback = Column(Text, nullable=True)
 
 # ---------- Chat ----------
 class Chat(Base):
@@ -49,3 +51,19 @@ class Message(Base):
     chat_id = Column(Integer, ForeignKey("chats.id"))
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # <-- new
     chat = relationship("Chat", back_populates="messages")
+
+
+# ---------- Parent ----------
+class Parent(Base):
+    __tablename__ = "parents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    password = Column(String, nullable=False)
+
+    name = Column(String, nullable=True)
+    phone_number = Column(String, nullable=True)
+
+    # Link to student (user) this parent belongs to (by username)
+    student_username = Column(String, ForeignKey("users.username"), nullable=False)
+    student = relationship("User", foreign_keys=[student_username])

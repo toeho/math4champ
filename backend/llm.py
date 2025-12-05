@@ -21,16 +21,112 @@ def load_prompt_for_class(class_number: int) -> dict:
         4: "prompts/four.json",
         5: "prompts/five.json",
     }
-    file_path = mapping.get(class_number, "prompts/five.json")
-    if not os.path.exists(file_path):
-        # fallback: return a simple system prompt
+    # We will load the base prompt from `prompts/two.json` and then
+    # load the syllabus for the requested class and add it into the
+    # system prompt content before returning.
+    # Resolve paths relative to this file so imports work from any CWD
+    base_dir = os.path.dirname(__file__)
+    base_prompt_path = os.path.join(base_dir, "prompts", "two.json")
+
+    # Fallback behavior if base prompt missing: try class-specific prompt
+    if not os.path.exists(base_prompt_path):
+        file_path = mapping.get(class_number, "prompts/five.json")
+        if not os.path.exists(file_path):
+            return {"role": "system", "content": {"type": "text", "text": "You are a helpful math tutor."}}
+        with open(file_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    # Load base prompt (two.json)
+    try:
+        with open(base_prompt_path, "r", encoding="utf-8") as f:
+            prompt = json.load(f)
+    except Exception:
         return {"role": "system", "content": {"type": "text", "text": "You are a helpful math tutor."}}
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+
+    # Normalize class number
+    try:
+        cls_num = int(class_number)
+    except Exception:
+        cls_num = 5
+
+    # Load appropriate syllabus file and extract class entry
+    syllabus_text = ""
+    try:
+        if 1 <= cls_num <= 5:
+            syllabus_file = os.path.join(base_dir, "syllabus", "topics.json")
+            syllabus_key = f"class_{cls_num}"
+        else:
+            syllabus_file = os.path.join(base_dir, "syllabus", "class6-12.json")
+            syllabus_key = f"Class_{cls_num}"
+
+        if os.path.exists(syllabus_file):
+            with open(syllabus_file, "r", encoding="utf-8") as sf:
+                syl = json.load(sf)
+            class_syl = syl.get(syllabus_key)
+            # Some syllabus files (e.g. class6-12.json) wrap classes under
+            # a top-level key like "Mathematics_Syllabus" — handle that.
+            if class_syl is None and type(syl) is dict and "Mathematics_Syllabus" in syl:
+                wrapped = syl.get("Mathematics_Syllabus")
+                if type(wrapped) is dict:
+                    class_syl = wrapped.get(syllabus_key)
+            if class_syl:
+                parts = []
+                # limits to keep prompt size reasonable
+                MAX_ITEMS_PER_SECTION = 6
+                MAX_TOTAL_CHARS = 1000
+                # class_syl is usually a mapping of section -> list
+                for section, items in class_syl.items():
+                    # Prefer explicit type checks without using isinstance
+                    if type(items) is list:
+                        # items may be list of dicts (topics.json) or list of strings
+                        if items and type(items[0]) is dict:
+                            # extract chapter names, limit length
+                            names = [str(x.get("chapter", "")) for x in items[:MAX_ITEMS_PER_SECTION]]
+                            chapter_list = ", ".join(names)
+                            if len(items) > MAX_ITEMS_PER_SECTION:
+                                chapter_list += ", ..."
+                            parts.append(f"{section}: {chapter_list}")
+                        else:
+                            vals = [str(x) for x in items[:MAX_ITEMS_PER_SECTION]]
+                            svals = ", ".join(vals)
+                            if len(items) > MAX_ITEMS_PER_SECTION:
+                                svals += ", ..."
+                            parts.append(f"{section}: {svals}")
+                    elif type(items) is dict:
+                        vals = [str(v) for v in items.values()]
+                        parts.append(f"{section}: {', '.join(vals[:MAX_ITEMS_PER_SECTION])}")
+                    else:
+                        parts.append(f"{section}: {str(items)}")
+
+                if parts:
+                    syllabus_text = f"Syllabus for class_{cls_num}:\n" + "\n".join(parts)
+                    # Ensure syllabus_text stays within a reasonable size
+                    if len(syllabus_text) > MAX_TOTAL_CHARS:
+                        syllabus_text = syllabus_text[:MAX_TOTAL_CHARS].rsplit('\n', 1)[0] + "\n..."
+    except Exception:
+        syllabus_text = ""
+
+    # If the prompt 'content' is a string, prepend the syllabus text.
+    if syllabus_text:
+        if type(prompt.get("content")) is str:
+            prompt["content"] = syllabus_text + "\n\n" + prompt["content"]
+        else:
+            # If content is structured, add a text field or convert to a string
+            try:
+                # try to keep structure but include a leading text field
+                if type(prompt["content"]) is dict:
+                    # embed syllabus under a new key if possible
+                    prompt["content"] = {**prompt["content"], "syllabus": syllabus_text}
+                else:
+                    prompt["content"] = {"type": "text", "text": syllabus_text + "\n\n" + json.dumps(prompt["content"])}
+            except Exception:
+                prompt["content"] = {"type": "text", "text": syllabus_text}
+
+    return prompt
 
 
 
-def generate_hint(question: str,  last_context: str = "", image_b64 :str | None = None, user_class: int | str | None = None ) -> str:
+def generate_hint(question: str,  last_context: str = "", image_b64 :str | None = None, user_class: int | str | None = None, parent_feedback: str | None = None, **kwargs) -> str:
     """Generate a concise hint using a class-specific prompt.
     Args:
         question: The student's question text.
@@ -59,10 +155,13 @@ def generate_hint(question: str,  last_context: str = "", image_b64 :str | None 
     system_prompt = load_prompt_for_class(class_number)
 
     # Build message content and include the student class in the prompt
+    # Include parent feedback in the prompt if present to give the LLM extra context
+    feedback_section = f"\nParent feedback: {parent_feedback}" if parent_feedback else ""
+
     content = [
         {
             "type": "text",
-            "text": f"Student class: class_{class_number}\nStudent question: {question}\nPrevious context: {last_context}\nRespond concisely."
+            "text": f"Student class: class_{class_number}\nStudent question: {question}\nPrevious context: {last_context}{feedback_section}\nRespond concisely."
         }
     ]
 

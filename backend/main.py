@@ -13,6 +13,7 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from routers import user, chat, history, explore, syllabus, topics
+from routers import parent
 from fastapi.middleware.cors import CORSMiddleware
 # create tables
 def ensure_streak_columns():
@@ -30,6 +31,9 @@ def ensure_streak_columns():
                 stmts.append("ALTER TABLE users ADD COLUMN current_streak INTEGER DEFAULT 0")
             if "max_streak" not in cols:
                 stmts.append("ALTER TABLE users ADD COLUMN max_streak INTEGER DEFAULT 0")
+            # add Parent_feedback column if missing
+            if "Parent_feedback" not in cols:
+                stmts.append("ALTER TABLE users ADD COLUMN Parent_feedback TEXT")
             for s in stmts:
                 conn.execute(text(s))
             if stmts:
@@ -60,3 +64,4 @@ app.include_router(history.router)
 app.include_router(explore.router)
 app.include_router(syllabus.router)
 app.include_router(topics.router)
+app.include_router(parent.router)

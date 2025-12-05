@@ -17,9 +17,10 @@ class UserBase(BaseModel):
     total_attempts: Optional[int] = 0
     correct_attempts: Optional[int] = 0
     score: Optional[float] = 0.0
+    Parent_feedback: Optional[str] = None  # Parent feedback for this student
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Updated from orm_mode for Pydantic V2
 
 class UserCreate(UserBase):
     password: str
@@ -86,3 +87,59 @@ class ExploreData(BaseModel):
     strengths: Strengths
     weeklyGoal: WeeklyGoal
     badges: List[str]
+
+
+# ---------- Parent Schemas ----------
+class ParentBase(BaseModel):
+    username: str
+    name: Optional[str] = None
+    phone_number: Optional[str] = None
+    student_username: str
+
+    class Config:
+        from_attributes = True
+
+
+class ParentCreate(ParentBase):
+    password: str
+
+
+class ParentLogin(BaseModel):
+    username: str
+    password: str
+
+
+class ParentOut(ParentBase):
+    id: int
+
+
+class ParentFeedback(BaseModel):
+    feedback: str
+
+
+# ---------- Parent Stats Schemas ----------
+class ChildStats(BaseModel):
+    username: str
+    name: Optional[str] = None
+    class_level: Optional[str] = None
+    level: Optional[int] = None
+    total_attempts: int = 0
+    correct_attempts: int = 0
+    accuracy: float = 0.0
+    score: float = 0.0
+    current_streak: int = 0
+    max_streak: int = 0
+
+
+class Comparison(BaseModel):
+    class_count: int = 0
+    avg_score: float = 0.0
+    avg_accuracy: float = 0.0
+    top_score: float = 0.0
+    rank: int = 0
+    percentile: float = 0.0
+
+
+class ParentStatsOut(BaseModel):
+    child: ChildStats
+    comparison: Comparison
