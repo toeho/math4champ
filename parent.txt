@@ -1,0 +1,140 @@
+**Parent API Endpoints**
+
+- **Endpoint:** `POST /parents/register`  
+  **Purpose:** Register a new parent and link to a student.  
+  **Auth:** none  
+  **Request (JSON - body):** type `ParentCreate`  
+  - Fields: `username` (string), `password` (string), `name` (string, optional), `phone_number` (string, optional), `student_username` (string)  
+  **Example request body:**  
+  ```json
+  {
+    "username": "parent_raj",
+    "password": "s3cretPass",
+    "name": "Mr. Raj Sharma",
+    "phone_number": "+919876543210",
+    "student_username": "student_arya"
+  }
+  ```  
+  **Response (201/200):** type `ParentOut` — created parent object  
+  **Example response:**  
+  ```json
+  {
+    "id": 12,
+    "username": "parent_raj",
+    "name": "Mr. Raj Sharma",
+    "phone_number": "+919876543210",
+    "student_username": "student_arya"
+  }
+  ```  
+  **Errors:** `400` if username exists, `404` if `student_username` not found.
+
+- **Endpoint:** `POST /parents/login`  
+  **Purpose:** Authenticate parent and return JWT access token.  
+  **Auth:** none  
+  **Request (JSON - body):** type `ParentLogin`  
+  - Fields: `username` (string), `password` (string)  
+  **Example request body:**  
+  ```json
+  {
+    "username": "parent_raj",
+    "password": "s3cretPass"
+  }
+  ```  
+  **Response (200):** JSON with `access_token` and `token_type`  
+  **Example response:**  
+  ```json
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "token_type": "bearer"
+  }
+  ```  
+  **Errors:** `401` for invalid credentials.
+
+- **Endpoint:** `POST /parents/feedback`  
+  **Purpose:** Parent sends a short feedback which is stored on the linked student (`users.Parent_feedback`).  
+  **Auth:** required — provide `Authorization: Bearer <access_token>` from `/parents/login`  
+  **Request (JSON - body):** type `ParentFeedback`  
+  - Fields: `feedback` (string)  
+  **Example request body:**  
+  ```json
+  {
+    "feedback": "Please focus on multiplication tables; Arya learns better with visual steps."
+  }
+  ```  
+  **Response (200):** confirmation with the linked `student_username` and stored `Parent_feedback`  
+  **Example response:**  
+  ```json
+  {
+    "status": "ok",
+    "student_username": "student_arya",
+    "Parent_feedback": "Please focus on multiplication tables; Arya learns better with visual steps."
+  }
+  ```  
+  **Errors:** `403` if token isn't a parent, `404` if linked student missing.
+
+- **Endpoint:** `GET /parents/stats`  
+  **Purpose:** Return the linked child's statistics and comparison with other students in same class.  
+  **Auth:** required — provide `Authorization: Bearer <access_token>` from `/parents/login`  
+  **Request:** no body (authenticated GET)  
+  **Response (200):** type `ParentStatsOut` containing `child` and `comparison` sections.  
+  **Example response:**  
+  ```json
+  {
+    "child": {
+      "username": "student_arya",
+      "name": "Arya Sharma",
+      "class_level": "class_5",
+      "level": 5,
+      "total_attempts": 120,
+      "correct_attempts": 95,
+      "accuracy": 0.7916666666666666,
+      "score": 78.5,
+      "current_streak": 4,
+      "max_streak": 7
+    },
+    "comparison": {
+      "class_count": 48,
+      "avg_score": 65.2,
+      "avg_accuracy": 0.72,
+      "top_score": 92.0,
+      "rank": 7,
+      "percentile": 85.41666666666666
+    }
+  }
+  ```  
+  **Notes on computation:**  
+  - Class grouping uses `child.class_level` if set, otherwise `level`.  
+  - `accuracy` = `correct_attempts / total_attempts` (0 if no attempts).  
+  - `rank` is 1-based (1 = highest score), `percentile` computed relative to class size.  
+  **Errors:** `403` if caller not authenticated as parent, `404` if linked student missing.
+
+Authentication header example for protected endpoints:
+```http
+Authorization: Bearer <access_token>
+```
+
+Quick curl examples
+- Register:
+```bash
+curl -X POST http://localhost:8000/parents/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"parent_raj","password":"s3cretPass","student_username":"student_arya"}'
+```
+- Login:
+```bash
+curl -X POST http://localhost:8000/parents/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"parent_raj","password":"s3cretPass"}'
+```
+- Send feedback (replace `<TOKEN>`):
+```bash
+curl -X POST http://localhost:8000/parents/feedback \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <TOKEN>" \
+  -d '{"feedback":"Please review fractions with visual aids."}'
+```
+- Get stats (replace `<TOKEN>`):
+```bash
+curl -X GET http://localhost:8000/parents/stats \
+  -H "Authorization: Bearer <TOKEN>"
+```
