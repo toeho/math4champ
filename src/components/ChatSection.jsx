@@ -22,7 +22,10 @@ export default function ChatSection({
   // Teacher expression logic based on message content
   const getTeacherExpression = (text) => {
     if (!text) return "neutral";
-    const lowerText = text.toLowerCase();
+    // Ensure text is a string (handle cases where it might be an object)
+    const textStr = typeof text === "string" ? text : String(text || "");
+    if (!textStr) return "neutral";
+    const lowerText = textStr.toLowerCase();
     if (lowerText.includes("correct") || lowerText.includes("great") || lowerText.includes("excellent") || lowerText.includes("perfect")) {
       return "celebrating";
     }
@@ -200,9 +203,11 @@ export default function ChatSection({
     );
 
     const reply = response.bot_message || "No response received.";
+    // Ensure reply is a string (handle cases where bot_message might be an object)
+    const replyText = typeof reply === "string" ? reply : (reply?.text || String(reply));
 
-    setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
-    addConversation([...messages, newUserMsg, { text: reply, sender: "bot" }]);
+    setMessages((prev) => [...prev, { text: replyText, sender: "bot" }]);
+    addConversation([...messages, newUserMsg, { text: replyText, sender: "bot" }]);
 
     resetTimer();
   } catch (error) {

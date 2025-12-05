@@ -94,7 +94,7 @@ export const sendCheckRequest = async (input, username) => {
       session_id: currentSessionId,
     };
 
-    const response = await postRequest(`/checkit/${username}`, payload);
+    const response = await postRequest(`/chat/send/check/${username}`, payload);
     return response; // expect { bot_message: "...text..." }
   } catch (error) {
     console.error("❌ Check Request failed:", error);

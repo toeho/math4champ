@@ -12,8 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from routers import user, chat, history, explore, syllabus, topics
-from routers import parent
+from routers import user, chat, history, explore, syllabus, topics, parent
 from fastapi.middleware.cors import CORSMiddleware
 # create tables
 def ensure_streak_columns():
