@@ -143,3 +143,12 @@ class Comparison(BaseModel):
 class ParentStatsOut(BaseModel):
     child: ChildStats
     comparison: Comparison
+
+# ---------- Parent Report Schemas ----------
+class ParentReportRequest(BaseModel):
+    child: ChildStats
+    # Optional: include comparison to enrich report if available
+    comparison: Optional[Comparison] = None
+
+class ParentReportOut(BaseModel):
+    report: str

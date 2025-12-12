@@ -1,11 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models.schemas import ParentCreate, ParentLogin, ParentOut, ParentFeedback, ParentStatsOut
+from models.schemas import (
+    ParentCreate,
+    ParentLogin,
+    ParentOut,
+    ParentFeedback,
+    ParentStatsOut,
+    ParentReportRequest,
+    ParentReportOut,
+)
 from models.models import Parent, User
 from helper import get_db
 from auth import create_access_token, verify_token
 from datetime import timedelta
 from sqlalchemy import func
+from llm import generate_parent_report
 
 router = APIRouter(prefix="/parents", tags=["parents"])
 
@@ -127,3 +136,25 @@ def parent_stats(username: str = Depends(verify_token), db: Session = Depends(ge
     }
 
     return {"child": child_stats, "comparison": comparison}
+
+
+@router.post("/report", response_model=ParentReportOut)
+def generate_child_report(payload: ParentReportRequest, username: str = Depends(verify_token), db: Session = Depends(get_db)):
+    """Generate a short descriptive report for the parent's child.
+
+    Accepts the child's stats (and optional comparison) and calls the LLM to
+    produce a concise, parent-friendly summary. Auth verifies caller is the parent.
+    """
+    parent = db.query(Parent).filter(Parent.username == username).first()
+    if not parent:
+        raise HTTPException(status_code=403, detail="Parent not found or not authenticated as parent")
+
+    try:
+        text = generate_parent_report(
+            child=dict(payload.child),
+            comparison=dict(payload.comparison) if payload.comparison is not None else None,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM error: {e}")
+
+    return {"report": text}

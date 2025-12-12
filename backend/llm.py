@@ -6,7 +6,7 @@ from litellm import completion
 
 load_dotenv()
 
-MODEL_NAME = "gemini/gemini-2.0-flash"  # format for LiteLLM Gemini
+MODEL_NAME = "gemini/gemini-2.5-flash"  # format for LiteLLM Gemini
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 
@@ -300,3 +300,66 @@ Output format (must match exactly):
     except Exception as e:
         print("⚠️ check_answer error:", e)
         return {"final": False, "correct": False, "feedback": "Error or invalid JSON"}
+
+
+def generate_parent_report(child: dict, comparison: dict | None = None) -> str:
+    """Generate a short descriptive, encouraging report for a parent.
+
+    Args:
+        child: Dict of child's stats with keys like name, username, class_level/level,
+               score, accuracy, total_attempts, correct_attempts, current_streak, max_streak.
+        comparison: Optional dict containing class-wide metrics (avg_score, rank, percentile, etc.).
+
+    Returns:
+        The report string.
+    """
+    # Prepare child summary lines safely
+    name = child.get("name") or child.get("username") or "Child"
+    cls = child.get("class_level") or child.get("level")
+    try:
+        cls_str = f"Class {int(cls)}" if isinstance(cls, (int, float, str)) and str(cls).isdigit() else str(cls)
+    except Exception:
+        cls_str = str(cls)
+
+    def fnum(x, nd=2):
+        try:
+            return f"{float(x):.{nd}f}"
+        except Exception:
+            return str(x)
+
+    child_summary = (
+        f"Name: {name}\n"
+        f"Class: {cls_str}\n"
+        f"Score: {fnum(child.get('score', 0.0))}\n"
+        f"Accuracy: {fnum(child.get('accuracy', 0.0))}\n"
+        f"Attempts: {int(child.get('total_attempts', 0))} (correct: {int(child.get('correct_attempts', 0))})\n"
+        f"Streak: current {int(child.get('current_streak', 0))}, max {int(child.get('max_streak', 0))}"
+    )
+
+    comparison_summary = ""
+    if comparison:
+        comparison_summary = (
+            f"\nClass count: {int(comparison.get('class_count', 0))}\n"
+            f"Avg score: {fnum(comparison.get('avg_score', 0.0))}\n"
+            f"Avg accuracy: {fnum(comparison.get('avg_accuracy', 0.0))}\n"
+            f"Top score: {fnum(comparison.get('top_score', 0.0))}\n"
+            f"Rank: {int(comparison.get('rank', 0))}\n"
+            f"Percentile: {fnum(comparison.get('percentile', 0.0))}"
+        )
+
+    system_prompt = {
+        "role": "system",
+        "content": "You are an educational progress summarizer. Write a short, clear, encouraging report (70–120 words) for a parent about their child's math practice, using provided stats. Highlight strengths, practical next steps, and keep tone supportive. Avoid technical jargon."
+    }
+
+    user_content = (
+        "Child Stats:\n" + child_summary + ("\n\nComparison:\n" + comparison_summary if comparison_summary else "")
+    )
+
+    messages = [
+        system_prompt,
+        {"role": "user", "content": user_content},
+    ]
+
+    resp = completion(model=MODEL_NAME, messages=messages, api_key=API_KEY)
+    return resp["choices"][0]["message"]["content"].strip()
