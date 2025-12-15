@@ -2,12 +2,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParent } from "../../contexts/ParentContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { RefreshCw, AlertCircle, TrendingUp, User, GraduationCap } from "lucide-react";
 import StatsCard from "../../components/parent/StatsCard";
 import ComparisonChart from "../../components/parent/ComparisonChart";
+import AccuracyTrendChart from "../../components/parent/AccuracyTrendChart";
+import PerformanceRadarChart from "../../components/parent/PerformanceRadarChart";
+import ProgressDonutChart from "../../components/parent/ProgressDonutChart";
+import StreakActivityChart from "../../components/parent/StreakActivityChart";
 
 export default function ParentDashboard() {
   const { stats, statsLoading, fetchStats, parent } = useParent();
+  const { lang } = useLanguage();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -105,7 +111,9 @@ export default function ParentDashboard() {
     <div className="space-y-6 pb-6">
       {/* Header with refresh button */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-white">
+          {lang === "hi" ? "डैशबोर्ड" : "Dashboard"}
+        </h1>
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
@@ -134,7 +142,9 @@ export default function ParentDashboard() {
           <div className="bg-white/20 p-2 rounded-lg">
             <User className="w-6 h-6 text-white" aria-hidden="true" />
           </div>
-          <h2 className="text-xl font-bold text-white">Student Overview</h2>
+          <h2 className="text-xl font-bold text-white">
+            {lang === "hi" ? "छात्र अवलोकन" : "Student Overview"}
+          </h2>
         </div>
         
         <div className="space-y-3">
@@ -165,11 +175,28 @@ export default function ParentDashboard() {
 
       {/* Performance Metrics */}
       <div>
-        <h2 className="text-xl font-bold text-white mb-4">Performance Metrics</h2>
+        <h2 className="text-xl font-bold text-white mb-4">
+          {lang === "hi" ? "प्रदर्शन मेट्रिक्स" : "Performance Metrics"}
+        </h2>
         <StatsCard stats={stats.child} />
       </div>
 
-      {/* Class Comparison Chart */}
+      {/* Charts Section - Single Column Layout */}
+      <div className="space-y-6">
+        {/* Accuracy Trend Chart */}
+        <AccuracyTrendChart stats={stats.child} />
+        
+        {/* Performance Radar Chart */}
+        <PerformanceRadarChart stats={stats.child} comparison={stats.comparison} />
+        
+        {/* Progress Donut Chart */}
+        <ProgressDonutChart stats={stats.child} comparison={stats.comparison} />
+        
+        {/* Streak Activity Chart */}
+        <StreakActivityChart stats={stats.child} />
+      </div>
+
+      {/* Class Comparison Chart - Full Width */}
       <div>
         <ComparisonChart 
           comparison={stats.comparison} 

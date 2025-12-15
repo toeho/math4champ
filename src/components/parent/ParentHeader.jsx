@@ -1,11 +1,18 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, Mic, User, Home } from "lucide-react";
+import { LayoutDashboard, Mic, User, Home, FileText } from "lucide-react";
 import { useLanguage } from "../../hooks/useLanguage";
+import { useParent } from "../../contexts/ParentContext";
+import { generateParentReport } from "../../utils/parentApi";
+import { useState } from "react";
+import ReportNotification from "./ReportNotification";
 
 export default function ParentHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const { lang, toggleLang } = useLanguage();
+  const { parent } = useParent();
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   const navLinks = [
     {
@@ -19,6 +26,11 @@ export default function ParentHeader() {
       path: "/parent/voice",
     },
     {
+      icon: <FileText size={18} aria-hidden="true" />,
+      label: lang === "hi" ? "रिपोर्ट जेनरेट करें" : "Generate Report",
+      action: "generate-report",
+    },
+    {
       icon: <User size={18} aria-hidden="true" />,
       label: lang === "hi" ? "प्रोफाइल" : "Profile",
       path: "/parent/profile",
@@ -29,18 +41,60 @@ export default function ParentHeader() {
     navigate(path);
   };
 
-  const handleKeyDown = (e, path) => {
+  const handleGenerateReport = async () => {
+    if (!parent || isGeneratingReport) return;
+
+    setIsGeneratingReport(true);
+    try {
+      const token = localStorage.getItem("parentToken");
+      if (!token) {
+        navigate("/parent/login");
+        return;
+      }
+
+      await generateParentReport(token);
+      
+      // Show success notification
+      setNotification({
+        type: 'success',
+        message: lang === "hi" 
+          ? "रिपोर्ट सफलतापूर्वक भेजी गई! कृपया अपना ईमेल चेक करें।" 
+          : "Report sent successfully! Please check your email."
+      });
+    } catch (error) {
+      console.error("Error generating report:", error);
+      setNotification({
+        type: 'error',
+        message: lang === "hi" 
+          ? "रिपोर्ट भेजने में त्रुटि हुई। कृपया पुनः प्रयास करें।" 
+          : "Error sending report. Please try again."
+      });
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
+
+  const handleAction = (link) => {
+    if (link.action === "generate-report") {
+      handleGenerateReport();
+    } else if (link.path) {
+      handleNavigation(link.path);
+    }
+  };
+
+  const handleKeyDown = (e, link) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      handleNavigation(path);
+      handleAction(link);
     }
   };
 
   return (
-    <header 
-      className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl px-4 py-3 shadow-lg animate-pulse-glow select-none"
-      role="banner"
-    >
+    <>
+      <header 
+        className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl px-4 py-3 shadow-lg animate-pulse-glow select-none"
+        role="banner"
+      >
       {/* Animated gradient background with subtle pulse effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 opacity-50 animate-shimmer bg-[length:200%_100%]"></div>
       
@@ -118,32 +172,58 @@ export default function ParentHeader() {
         >
           {navLinks.map((link, index) => {
             const isActive = location.pathname === link.path;
+            const isGenerateReport = link.action === "generate-report";
             
             return (
               <button
                 key={index}
-                onClick={() => handleNavigation(link.path)}
-                onKeyDown={(e) => handleKeyDown(e, link.path)}
+                onClick={() => handleAction(link)}
+                onKeyDown={(e) => handleKeyDown(e, link)}
+                disabled={isGenerateReport && isGeneratingReport}
                 className={`
                   flex items-center gap-2 px-4 py-2 rounded-lg
                   transition-all duration-200 min-h-[44px]
                   focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-purple-600
                   ${isActive 
                     ? 'bg-white/30 text-white font-semibold shadow-md' 
+                    : isGenerateReport && isGeneratingReport
+                    ? 'bg-white/5 text-white/50 cursor-not-allowed'
                     : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
                   }
                 `}
-                aria-label={`Navigate to ${link.label}`}
+                aria-label={isGenerateReport 
+                  ? (lang === "hi" ? "रिपोर्ट जेनरेट करें" : "Generate Report")
+                  : `Navigate to ${link.label}`
+                }
                 aria-current={isActive ? 'page' : undefined}
                 tabIndex={0}
               >
-                {link.icon}
-                <span className="text-sm">{link.label}</span>
+                {isGenerateReport && isGeneratingReport ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                ) : (
+                  link.icon
+                )}
+                <span className="text-sm">
+                  {isGenerateReport && isGeneratingReport 
+                    ? (lang === "hi" ? "भेजा जा रहा..." : "Sending...")
+                    : link.label
+                  }
+                </span>
               </button>
             );
           })}
         </nav>
       </div>
     </header>
+
+    {/* Notification */}
+    {notification && (
+      <ReportNotification
+        type={notification.type}
+        message={notification.message}
+        onClose={() => setNotification(null)}
+      />
+    )}
+    </>
   );
 }

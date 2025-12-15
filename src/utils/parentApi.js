@@ -204,6 +204,50 @@ export function clearParentToken() {
 }
 
 /**
+ * Generate and send email report to parent
+ * @param {string} token - JWT authentication token
+ * @returns {Promise<Object>} Report generation confirmation response
+ * @throws {Error} If report generation fails
+ */
+export async function generateParentReport(token) {
+  // Check network connectivity
+  if (!isOnline()) {
+    const error = await parseError(null, new Error('No internet connection'));
+    handleError(error, { redirectOnAuth: false });
+    throw error;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/parent/generate`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    });
+
+    if (!res.ok) {
+      const error = await parseError(res, null);
+      // Handle 401 errors with automatic redirect
+      if (res.status === 401) {
+        handleError(error, { redirectOnAuth: true });
+      }
+      throw error;
+    }
+
+    return await res.json();
+  } catch (error) {
+    // If error is already parsed, re-throw it
+    if (error.type) {
+      throw error;
+    }
+    // Parse network errors
+    const parsedError = await parseError(null, error);
+    throw parsedError;
+  }
+}
+
+/**
  * Check if parent is authenticated
  * @returns {boolean} True if token exists
  */
