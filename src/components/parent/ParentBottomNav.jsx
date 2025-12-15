@@ -1,24 +1,26 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { LayoutDashboard, Mic, User } from "lucide-react";
+import { useLanguage } from "../../hooks/useLanguage";
 
 export default function ParentBottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { lang } = useLanguage();
 
   const navLinks = [
     {
       icon: LayoutDashboard,
-      label: "Dashboard",
+      label: lang === "hi" ? "डैशबोर्ड" : "Dashboard",
       path: "/parent/dashboard",
     },
     {
       icon: Mic,
-      label: "Voice Assistant",
+      label: lang === "hi" ? "वॉयस" : "Voice",
       path: "/parent/voice",
     },
     {
       icon: User,
-      label: "Profile",
+      label: lang === "hi" ? "प्रोफाइल" : "Profile",
       path: "/parent/profile",
     },
   ];

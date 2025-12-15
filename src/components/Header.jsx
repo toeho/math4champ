@@ -62,39 +62,52 @@ export default function Header() {
           </p>
         </div>
 
-        {/* Language toggle with smooth transition and slide indicator */}
-        <div className="relative">
-          <button
-            onClick={toggleLang}
-            className="relative bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-white/30 transition-all duration-200 overflow-hidden min-h-[44px] min-w-[44px]"
-            aria-label={`Switch language to ${lang === "hi" ? "English" : "Hindi"}`}
+        {/* Controls section with parent portal and language toggle */}
+        <div className="flex items-center gap-3">
+          {/* Parent Portal Link */}
+          <a
+            href="/parent/login"
+            className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/30 transition-all duration-200 min-h-[44px] flex items-center gap-2"
+            aria-label="Access Parent Portal"
           >
-            {/* Slide indicator background */}
-            <div
-              className={`absolute inset-y-0 w-1/2 bg-cyan-400 rounded-full transition-transform duration-300 ease-out ${
-                lang === "hi" ? "translate-x-0" : "translate-x-full"
-              }`}
-              style={{ left: 0 }}
-            ></div>
-            
-            {/* Language text */}
-            <div className="relative flex gap-3 items-center justify-center">
-              <span
-                className={`transition-all duration-200 ${
-                  lang === "hi" ? "text-white font-bold scale-110" : "text-white/70"
+            <span className="text-lg">👨‍👩‍👧</span>
+            <span className="hidden sm:inline">Parent</span>
+          </a>
+
+          {/* Language toggle with smooth transition and slide indicator */}
+          <div className="relative">
+            <button
+              onClick={toggleLang}
+              className="relative bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-white/30 transition-all duration-200 overflow-hidden min-h-[44px] min-w-[44px]"
+              aria-label={`Switch language to ${lang === "hi" ? "English" : "Hindi"}`}
+            >
+              {/* Slide indicator background */}
+              <div
+                className={`absolute inset-y-0 w-1/2 bg-cyan-400 rounded-full transition-transform duration-300 ease-out ${
+                  lang === "hi" ? "translate-x-0" : "translate-x-full"
                 }`}
-              >
-                अ
-              </span>
-              <span
-                className={`transition-all duration-200 ${
-                  lang === "en" ? "text-white font-bold scale-110" : "text-white/70"
-                }`}
-              >
-                A
-              </span>
-            </div>
-          </button>
+                style={{ left: 0 }}
+              ></div>
+              
+              {/* Language text */}
+              <div className="relative flex gap-3 items-center justify-center">
+                <span
+                  className={`transition-all duration-200 ${
+                    lang === "hi" ? "text-white font-bold scale-110" : "text-white/70"
+                  }`}
+                >
+                  अ
+                </span>
+                <span
+                  className={`transition-all duration-200 ${
+                    lang === "en" ? "text-white font-bold scale-110" : "text-white/70"
+                  }`}
+                >
+                  A
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>

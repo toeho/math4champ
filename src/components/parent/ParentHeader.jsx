@@ -1,24 +1,26 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, Mic, User } from "lucide-react";
+import { LayoutDashboard, Mic, User, Home } from "lucide-react";
+import { useLanguage } from "../../hooks/useLanguage";
 
 export default function ParentHeader() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { lang, toggleLang } = useLanguage();
 
   const navLinks = [
     {
       icon: <LayoutDashboard size={18} aria-hidden="true" />,
-      label: "Dashboard",
+      label: lang === "hi" ? "डैशबोर्ड" : "Dashboard",
       path: "/parent/dashboard",
     },
     {
       icon: <Mic size={18} aria-hidden="true" />,
-      label: "Voice Assistant",
+      label: lang === "hi" ? "वॉयस असिस्टेंट" : "Voice Assistant",
       path: "/parent/voice",
     },
     {
       icon: <User size={18} aria-hidden="true" />,
-      label: "Profile",
+      label: lang === "hi" ? "प्रोफाइल" : "Profile",
       path: "/parent/profile",
     },
   ];
@@ -55,8 +57,56 @@ export default function ParentHeader() {
             
             {/* Welcome message with fade-in animation */}
             <p className="text-xs lg:text-sm text-white/80 animate-fade-in animation-delay-300">
-              Monitor your child's progress
+              {lang === "hi" ? "अपने बच्चे की प्रगति देखें" : "Monitor your child's progress"}
             </p>
+          </div>
+
+          {/* Controls section with home link and language toggle */}
+          <div className="flex items-center gap-3">
+            {/* Home Link */}
+            <a
+              href="/"
+              className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/30 transition-all duration-200 min-h-[44px] flex items-center gap-2"
+              aria-label="Go to Student Home"
+            >
+              <Home size={18} aria-hidden="true" />
+              <span className="hidden sm:inline">{lang === "hi" ? "होम" : "Home"}</span>
+            </a>
+
+            {/* Language toggle with smooth transition and slide indicator */}
+            <div className="relative">
+              <button
+                onClick={toggleLang}
+                className="relative bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-white/30 transition-all duration-200 overflow-hidden min-h-[44px] min-w-[44px]"
+                aria-label={`Switch language to ${lang === "hi" ? "English" : "Hindi"}`}
+              >
+                {/* Slide indicator background */}
+                <div
+                  className={`absolute inset-y-0 w-1/2 bg-cyan-400 rounded-full transition-transform duration-300 ease-out ${
+                    lang === "hi" ? "translate-x-0" : "translate-x-full"
+                  }`}
+                  style={{ left: 0 }}
+                ></div>
+                
+                {/* Language text */}
+                <div className="relative flex gap-3 items-center justify-center">
+                  <span
+                    className={`transition-all duration-200 ${
+                      lang === "hi" ? "text-white font-bold scale-110" : "text-white/70"
+                    }`}
+                  >
+                    अ
+                  </span>
+                  <span
+                    className={`transition-all duration-200 ${
+                      lang === "en" ? "text-white font-bold scale-110" : "text-white/70"
+                    }`}
+                  >
+                    A
+                  </span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
