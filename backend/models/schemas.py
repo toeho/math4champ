@@ -222,3 +222,35 @@ class VideoDetail(VideoOut):
 
 class TeacherWithVideos(TeacherOut):
     videos: List[VideoOut] = []
+
+
+# ---------- Teacher-Student Schemas ----------
+class TeacherStudentCreate(BaseModel):
+    student_username: str
+    class_level: str
+
+
+class TeacherStudentOut(BaseModel):
+    id: int
+    teacher_id: int
+    student_username: str
+    enrolled_date: str
+    class_level: str
+    
+    class Config:
+        from_attributes = True
+
+
+class StudentInfo(BaseModel):
+    username: str
+    name: Optional[str] = None
+    email: Optional[str] = None
+    class_level: Optional[str] = None
+    enrolled_date: str
+    
+    class Config:
+        from_attributes = True
+
+
+class TeacherWithStudents(TeacherOut):
+    students: List[StudentInfo] = []

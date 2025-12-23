@@ -86,6 +86,26 @@ class Teacher(Base):
     
     # Videos uploaded by this teacher
     videos = relationship("Video", back_populates="teacher", cascade="all, delete")
+    
+    # Students enrolled with this teacher
+    teacher_students = relationship("TeacherStudent", back_populates="teacher", cascade="all, delete")
+
+
+# ---------- Teacher-Student Relationship ----------
+class TeacherStudent(Base):
+    __tablename__ = "teacher_students"
+
+    id = Column(Integer, primary_key=True, index=True)
+    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
+    student_username = Column(String, ForeignKey("users.username"), nullable=False)
+    
+    # Metadata
+    enrolled_date = Column(String, nullable=False)  # ISO format date
+    class_level = Column(String, nullable=False)  # Student's class when enrolled
+    
+    # Relationships
+    teacher = relationship("Teacher", back_populates="teacher_students")
+    student = relationship("User", foreign_keys=[student_username])
 
 
 # ---------- Video ----------
