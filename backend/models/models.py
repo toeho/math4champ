@@ -68,3 +68,43 @@ class Parent(Base):
     # Link to student (user) this parent belongs to (by username)
     student_username = Column(String, ForeignKey("users.username"), nullable=False)
     student = relationship("User", foreign_keys=[student_username])
+
+
+# ---------- Teacher ----------
+class Teacher(Base):
+    __tablename__ = "teachers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    password = Column(String, nullable=False)
+
+    name = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+    phone_number = Column(String, nullable=True)
+    bio = Column(Text, nullable=True)
+    avatar = Column(Text, nullable=True)
+    
+    # Videos uploaded by this teacher
+    videos = relationship("Video", back_populates="teacher", cascade="all, delete")
+
+
+# ---------- Video ----------
+class Video(Base):
+    __tablename__ = "videos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    class_level = Column(String, nullable=False)  # e.g., "class_6", "class_10"
+    subject = Column(String, nullable=True)
+    duration = Column(Integer, nullable=True)  # in seconds
+    file_path = Column(String, nullable=False)  # path to video file
+    file_size = Column(Integer, nullable=True)  # in bytes
+    thumbnail = Column(Text, nullable=True)  # thumbnail image path or URL
+    
+    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
+    teacher = relationship("Teacher", back_populates="videos")
+    
+    # Metadata
+    upload_date = Column(String, nullable=False)  # ISO format date
+    view_count = Column(Integer, default=0)

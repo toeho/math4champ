@@ -153,3 +153,72 @@ class ParentReportRequest(BaseModel):
 
 class ParentReportOut(BaseModel):
     report: str
+
+
+# ---------- Teacher Schemas ----------
+class TeacherBase(BaseModel):
+    username: str
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    bio: Optional[str] = None
+    avatar: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class TeacherCreate(TeacherBase):
+    password: str
+
+
+class TeacherLogin(BaseModel):
+    username: str
+    password: str
+
+
+class TeacherOut(TeacherBase):
+    id: int
+
+
+class TeacherUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    bio: Optional[str] = None
+    avatar: Optional[str] = None
+    password: Optional[str] = None
+
+
+# ---------- Video Schemas ----------
+class VideoBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    class_level: str
+    subject: Optional[str] = None
+    duration: Optional[int] = None
+    file_size: Optional[int] = None
+    thumbnail: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class VideoCreate(VideoBase):
+    pass
+
+
+class VideoOut(VideoBase):
+    id: int
+    teacher_id: int
+    upload_date: str
+    view_count: int
+    file_path: str
+
+
+class VideoDetail(VideoOut):
+    teacher: Optional[TeacherOut] = None
+
+
+class TeacherWithVideos(TeacherOut):
+    videos: List[VideoOut] = []

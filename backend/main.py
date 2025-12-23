@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from database import Base, engine
 from sqlalchemy import text
 
@@ -12,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from routers import user, chat, history, explore, syllabus, topics, parent, quotes_router
+from routers import user, chat, history, explore, syllabus, topics, parent, quotes_router, teacher
 from fastapi.middleware.cors import CORSMiddleware
 # create tables
 def ensure_streak_columns():
@@ -49,6 +50,11 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+# Serve uploaded files (videos/thumbnails) at /uploads/*
+uploads_dir = BASE_DIR / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -64,4 +70,5 @@ app.include_router(explore.router)
 app.include_router(syllabus.router)
 app.include_router(topics.router)
 app.include_router(parent.router)
+app.include_router(teacher.router)
 app.include_router(quotes_router.router)

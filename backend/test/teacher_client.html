@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Module Tester</title>
+  <style>
+    :root { --bg: #0b1020; --card: #121a2f; --muted: #8892b0; --text: #e6f1ff; --brand: #4f46e5; --ok: #16a34a; --warn: #f59e0b; --err: #ef4444; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--text); }
+    h1 { margin: 0 0 16px; font-size: 20px; }
+    h2 { margin: 24px 0 12px; font-size: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border: 1px solid #1f2a44; border-radius: 10px; padding: 16px; }
+    label { display: block; font-size: 12px; color: var(--muted); margin: 8px 0 4px; }
+    input, textarea, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #243049; background: #0e1427; color: var(--text); outline: none; }
+    input[type=file] { padding: 6px; }
+    button { appearance: none; border: none; background: var(--brand); color: white; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row > * { flex: 1; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+    pre { white-space: pre-wrap; word-break: break-word; background: #0e1427; border: 1px solid #243049; padding: 12px; border-radius: 8px; max-height: 240px; overflow: auto; }
+    .list { display: grid; gap: 8px; }
+    .list-item { border: 1px solid #243049; border-radius: 8px; padding: 10px; background: #0e1427; }
+    video { width: 100%; max-height: 360px; border-radius: 8px; outline: 1px solid #243049; background: #000; }
+    .header { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #0e1427; border: 1px solid #243049; color: var(--muted); }
+    .small { font-size: 12px; }
+    a { color: #93c5fd; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Teacher Module Tester</h1>
+    <div class="row" style="max-width: 520px;">
+      <input id="baseUrl" value="http://127.0.0.1:8000" />
+      <button id="pingBtn">Ping</button>
+      <span id="pingStatus" class="badge">idle</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1) Register Teacher</h2>
+      <label>Username</label>
+      <input id="reg_username" placeholder="teacher_001" />
+      <label>Password</label>
+      <input id="reg_password" type="password" placeholder="pass1234" />
+      <label>Name</label>
+      <input id="reg_name" placeholder="Jane Doe" />
+      <label>Email</label>
+      <input id="reg_email" placeholder="jane@example.com" />
+      <label>Bio</label>
+      <textarea id="reg_bio" placeholder="About you..."></textarea>
+      <div class="row">
+        <button id="registerBtn">Register</button>
+        <span class="muted small">Creates a teacher record</span>
+      </div>
+      <h3 class="small muted">Response</h3>
+      <pre id="registerOut"></pre>
+    </div>
+
+    <div class="card">
+      <h2>2) Login</h2>
+      <label>Username</label>
+      <input id="login_username" placeholder="teacher_001" />
+      <label>Password</label>
+      <input id="login_password" type="password" placeholder="pass1234" />
+      <div class="row">
+        <button id="loginBtn">Login</button>
+        <span id="authBadge" class="badge">no token</span>
+      </div>
+      <h3 class="small muted">Response</h3>
+      <pre id="loginOut"></pre>
+    </div>
+
+    <div class="card">
+      <h2>3) Upload Video</h2>
+      <label>Title</label>
+      <input id="up_title" placeholder="Algebra Basics" />
+      <label>Class Level</label>
+      <input id="up_class" placeholder="class_6" />
+      <label>Description</label>
+      <input id="up_desc" placeholder="Intro to Algebra" />
+      <label>Subject</label>
+      <input id="up_subject" placeholder="Math" />
+      <label>Video File (.mp4, .webm, ...)</label>
+      <input id="up_file" type="file" accept="video/*" />
+      <div class="row">
+        <button id="uploadBtn">Upload</button>
+        <span class="muted small">Requires login token</span>
+      </div>
+      <h3 class="small muted">Response</h3>
+      <pre id="uploadOut"></pre>
+    </div>
+
+    <div class="card">
+      <h2>4) Browse by Class</h2>
+      <label>Class Level</label>
+      <input id="list_class" placeholder="class_6" />
+      <div class="row">
+        <button id="listTeachersBtn">List Teachers</button>
+        <span class="muted small">Public endpoint</span>
+      </div>
+      <div class="list" id="teachersList"></div>
+    </div>
+
+    <div class="card">
+      <h2>5) Teacher Videos</h2>
+      <div class="row">
+        <input id="videos_teacher_id" placeholder="teacher id" />
+        <input id="videos_class" placeholder="class_6" />
+        <button id="listVideosBtn">Load Videos</button>
+      </div>
+      <div class="list" id="videosList"></div>
+    </div>
+
+    <div class="card">
+      <h2>6) Video Details + Player</h2>
+      <div class="row">
+        <input id="detail_video_id" placeholder="video id" />
+        <button id="detailBtn">Get Details (increments view)</button>
+        <button id="streamBtn">Get Stream Path</button>
+      </div>
+      <pre id="detailOut"></pre>
+      <video id="player" controls></video>
+      <div class="row">
+        <button id="playBtn">Play via Stream Path</button>
+        <span id="playerStatus" class="badge">no source</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const state = { token: null, teacherId: null, lastStreamPath: null };
+
+    function setBadge(el, text) { el.textContent = text; }
+    function show(outEl, data) {
+      try { outEl.textContent = JSON.stringify(data, null, 2); }
+      catch { outEl.textContent = String(data); }
+    }
+    function base() { return $("baseUrl").value.replace(/\/$/, ""); }
+
+    async function ping() {
+      setBadge($("pingStatus"), "pinging...");
+      try {
+        const r = await fetch(base() + "/openapi.json", { cache: "no-store" });
+        setBadge($("pingStatus"), r.ok ? "server ok" : "server error");
+      } catch {
+        setBadge($("pingStatus"), "unreachable");
+      }
+    }
+
+    $("pingBtn").addEventListener("click", ping);
+
+    // Register
+    $("registerBtn").addEventListener("click", async () => {
+      const payload = {
+        username: $("reg_username").value.trim(),
+        password: $("reg_password").value,
+        name: $("reg_name").value.trim() || undefined,
+        email: $("reg_email").value.trim() || undefined,
+        bio: $("reg_bio").value.trim() || undefined,
+      };
+      try {
+        const r = await fetch(base() + "/teachers/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        show($("registerOut"), data);
+        if (r.ok) state.teacherId = data.id;
+      } catch (e) {
+        show($("registerOut"), { error: String(e) });
+      }
+    });
+
+    // Login
+    $("loginBtn").addEventListener("click", async () => {
+      const payload = {
+        username: $("login_username").value.trim(),
+        password: $("login_password").value,
+      };
+      try {
+        const r = await fetch(base() + "/teachers/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        show($("loginOut"), data);
+        if (r.ok && data.access_token) {
+          state.token = data.access_token;
+          state.teacherId = data.teacher_id;
+          setBadge($("authBadge"), "token ready");
+        } else {
+          setBadge($("authBadge"), "login failed");
+        }
+      } catch (e) {
+        show($("loginOut"), { error: String(e) });
+        setBadge($("authBadge"), "error");
+      }
+    });
+
+    // Upload (metadata must be query params; file is multipart)
+    $("uploadBtn").addEventListener("click", async () => {
+      if (!state.token) { show($("uploadOut"), { error: "Login first" }); return; }
+      const title = $("up_title").value.trim();
+      const classLevel = $("up_class").value.trim();
+      const desc = $("up_desc").value.trim();
+      const subject = $("up_subject").value.trim();
+      const file = $("up_file").files[0];
+      if (!title || !classLevel || !file) {
+        show($("uploadOut"), { error: "Title, class level and file are required" });
+        return;
+      }
+      const qs = new URLSearchParams({ title, class_level: classLevel });
+      if (desc) qs.set("description", desc);
+      if (subject) qs.set("subject", subject);
+
+      const fd = new FormData();
+      fd.append("file", file, file.name || "video.mp4");
+
+      try {
+        const r = await fetch(base() + "/teachers/videos/upload?" + qs.toString(), {
+          method: "POST",
+          headers: { Authorization: "Bearer " + state.token },
+          body: fd
+        });
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        show($("uploadOut"), data);
+        if (r.ok && data.video_id) {
+          $("detail_video_id").value = String(data.video_id);
+        }
+      } catch (e) {
+        show($("uploadOut"), { error: String(e) });
+      }
+    });
+
+    // List teachers by class
+    $("listTeachersBtn").addEventListener("click", async () => {
+      const classLevel = $("list_class").value.trim();
+      $("teachersList").innerHTML = "";
+      if (!classLevel) return;
+      try {
+        const r = await fetch(base() + "/teachers/class/" + encodeURIComponent(classLevel));
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        if (!Array.isArray(data)) { $("teachersList").innerHTML = `<div class='muted'>${r.status}: ${r.statusText}</div>`; return; }
+        data.forEach(t => {
+          const el = document.createElement("div");
+          el.className = "list-item";
+          el.innerHTML = `
+            <div class="row">
+              <div><strong>${t.name || t.username}</strong><div class="muted small">${t.email || ""}</div></div>
+              <button data-id="${t.id}" class="load-videos">Load Videos</button>
+            </div>
+            <div class="small muted">videos: ${t.video_count}</div>
+          `;
+          $("teachersList").appendChild(el);
+        });
+        $("teachersList").querySelectorAll(".load-videos").forEach(btn => {
+          btn.addEventListener("click", () => {
+            $("videos_teacher_id").value = btn.getAttribute("data-id");
+            $("videos_class").value = classLevel;
+            $("listVideosBtn").click();
+          });
+        });
+      } catch (e) {
+        $("teachersList").innerHTML = `<div class='err small'>${String(e)}</div>`;
+      }
+    });
+
+    // List videos for teacher + class
+    $("listVideosBtn").addEventListener("click", async () => {
+      const tid = $("videos_teacher_id").value.trim();
+      const classLevel = $("videos_class").value.trim();
+      $("videosList").innerHTML = "";
+      if (!tid || !classLevel) return;
+      try {
+        const r = await fetch(base() + `/teachers/by-teacher/${encodeURIComponent(tid)}/class/${encodeURIComponent(classLevel)}`);
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        if (!data || !Array.isArray(data.videos)) { $("videosList").innerHTML = `<div class='muted'>${r.status}: ${r.statusText}</div>`; return; }
+        data.videos.forEach(v => {
+          const el = document.createElement("div");
+          el.className = "list-item";
+          el.innerHTML = `
+            <div><strong>${v.title}</strong> <span class="badge">${v.class_level}</span></div>
+            <div class="muted small">${v.subject || ""}</div>
+            <div class="row" style="margin-top:6px;">
+              <button data-id="${v.id}" class="view-detail">Details</button>
+              <button data-id="${v.id}" class="stream-now">Stream Path</button>
+            </div>
+          `;
+          $("videosList").appendChild(el);
+        });
+        $("videosList").querySelectorAll(".view-detail").forEach(btn => {
+          btn.addEventListener("click", () => { $("detail_video_id").value = btn.getAttribute("data-id"); $("detailBtn").click(); });
+        });
+        $("videosList").querySelectorAll(".stream-now").forEach(btn => {
+          btn.addEventListener("click", () => { $("detail_video_id").value = btn.getAttribute("data-id"); $("streamBtn").click(); });
+        });
+      } catch (e) {
+        $("videosList").innerHTML = `<div class='err small'>${String(e)}</div>`;
+      }
+    });
+
+    // Video details (increments view)
+    $("detailBtn").addEventListener("click", async () => {
+      const vid = $("detail_video_id").value.trim();
+      if (!vid) return;
+      try {
+        const r = await fetch(base() + "/teachers/videos/" + encodeURIComponent(vid));
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        show($("detailOut"), data);
+      } catch (e) { show($("detailOut"), { error: String(e) }); }
+    });
+
+    // Stream info (returns file_path) and set player src
+    $("streamBtn").addEventListener("click", async () => {
+      const vid = $("detail_video_id").value.trim();
+      if (!vid) return;
+      try {
+        const r = await fetch(base() + "/teachers/videos/stream/" + encodeURIComponent(vid));
+        const data = await r.json().catch(() => ({ text: r.statusText }));
+        show($("detailOut"), data);
+        if (r.ok && data.file_path) {
+          state.lastStreamPath = data.file_path;
+          setBadge($("playerStatus"), "path ready");
+        }
+      } catch (e) { show($("detailOut"), { error: String(e) }); }
+    });
+
+    // Play via last stream path
+    $("playBtn").addEventListener("click", () => {
+      if (!state.lastStreamPath) { setBadge($("playerStatus"), "no path"); return; }
+      const src = base() + state.lastStreamPath;
+      const player = $("player");
+      player.src = src;
+      player.play().catch(() => {});
+      setBadge($("playerStatus"), "playing");
+    });
+
+    // Autofill helpers for speed in manual testing
+    (function initSuggest() {
+      const t = `teacher_${Date.now()}`;
+      $("reg_username").value = t;
+      $("login_username").value = t;
+      $("reg_password").value = "pass1234";
+      $("login_password").value = "pass1234";
+      $("reg_name").value = "Test Teacher";
+      $("reg_email").value = `${t}@example.com`;
+      $("reg_bio").value = "Automated teacher";
+      $("up_title").value = "Algebra Basics";
+      $("up_class").value = "class_6";
+      $("up_desc").value = "Intro to Algebra";
+      $("up_subject").value = "Math";
+      $("list_class").value = "class_6";
+    })();
+
+    // Initial ping hint
+    ping();
+  </script>
+</body>
+</html>
