@@ -63,6 +63,7 @@ class Parent(Base):
 
     name = Column(String, nullable=True)
     phone_number = Column(String, nullable=True)
+    email = Column(String, nullable=True)
 
     # Link to student (user) this parent belongs to (by username)
     student_username = Column(String, ForeignKey("users.username"), nullable=False)

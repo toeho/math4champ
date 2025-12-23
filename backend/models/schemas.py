@@ -94,6 +94,7 @@ class ParentBase(BaseModel):
     username: str
     name: Optional[str] = None
     phone_number: Optional[str] = None
+    email: Optional[str] = None
     student_username: str
 
     class Config:
